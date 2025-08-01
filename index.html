@@ -1,6 +1,7 @@
 <!DOCTYPE html><html lang="ko">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>공무원 DNA 테스트</title>
   <style>
     body {
@@ -14,17 +15,21 @@
       min-height: 100vh;
     }
     .container {
-      width: 360px;
-      height: 420px;
+      width: 90vw;
+      max-width: 420px;
+      height: 90vh;
       background: white;
       padding: 20px;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.1);
       text-align: center;
-      display: flex;
+      display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+    }
+    .container.show {
+      display: flex;
     }
     h1, h2, p {
       margin-bottom: 12px;
@@ -47,9 +52,6 @@
       border-radius: 8px;
       border: 1px solid #ccc;
     }
-    .question, #intro, #userinfo, #result {
-      display: none;
-    }
     .comment {
       font-size: 12px;
       color: #888;
@@ -62,7 +64,7 @@
     }
   </style>
 </head>
-<body>  <div class="container" id="userinfo" style="display:flex;">
+<body>  <div class="container show" id="userinfo">
     <h2>공직 경력 체크</h2>
     <p>당신의 공직 연차를 알려주세요!</p>
     <select id="experience">
@@ -81,7 +83,9 @@
     <h2>🎯 당신의 결과는?</h2>
     <img id="resultImage" src="" alt="결과 이미지">
     <p id="resultText"></p>
-    <button onclick="copyResult()">🔗 결과 복사하기</button>
+    <button onclick="copyResult()">🔗 결과 복사</button>
+    <button onclick="shareKakao()">💬 카카오톡 공유</button>
+    <button onclick="location.reload()">🔁 다시 하기</button>
   </div>  <script>
     let userInfo = {};
     let answers = [];
@@ -116,28 +120,33 @@
     ];
 
     const imageMap = {
-      '공온형 🌈': 'images/gongon.png',
+      '공온형 🌈': 'https://chat.openai.com/mnt/data/gongon.png',
       '숨은 회의형 🌀': 'https://chat.openai.com/mnt/data/quiet_fixed_v2.png',
-      '갈팡질팡형 🤹‍♀️': 'images/confused.png',
-      '번아웃형 🔥': 'images/burnout.png',
-      '퇴사각형 💣': 'images/retire.png'
+      '갈팡질팡형 🤹‍♀️': 'https://chat.openai.com/mnt/data/confused.png',
+      '번아웃형 🔥': 'https://chat.openai.com/mnt/data/burnout.png',
+      '퇴사각형 💣': 'https://chat.openai.com/mnt/data/retire.png'
     };
 
     const burnoutKeywords = ["회의감", "퇴사", "회식…", "몰랐던 척", "정년"];
 
-    const questions = [...]; // 기존 질문 구성 유지
-    const branchQuestions = {...}; // 기존 분기 구조 유지
+    const questions = [
+      { text: "퇴근 후 당신의 모습은?", options: ["📚 오늘도 자기계발!", "🛏️ 침대와 혼연일체", "🍕 넷플릭스+배달앱 콜라보", "🤯 회의감에 빠짐"] },
+      { text: "당신이 주로 쓰는 말은?", options: ["이건 왜 이렇게 비효율적이죠?", "결재 드렸습니다.", "이게 다 시민을 위한 일이죠.", "오늘은 누가 또 터뜨렸나…"] },
+      { text: "요즘 일 어때?", options: ["😊 보람 있어", "😕 말하면 길어", "😩 그냥 버티는 중", "🙄 또 그 얘기야?"] },
+      { text: "요즘 내 퇴사 욕구는?", options: ["💣 매우 높음 – 퇴사 각", "🔥 가끔 욱하지만 참음", "🧊 낮음 – 안정 최고", "😇 없음 – 나는 공무원이 천직"] }
+    ];
 
     function saveUserInfo() {
       const exp = document.getElementById('experience').value;
       userInfo = { experience: exp };
-      document.getElementById('userinfo').style.display = 'none';
-      document.getElementById('intro').style.display = 'flex';
+      document.getElementById('userinfo').classList.remove('show');
+      document.getElementById('intro').classList.add('show');
     }
 
     function startTest() {
-      document.getElementById('intro').style.display = 'none';
+      document.getElementById('intro').classList.remove('show');
       currentQuestion = 0;
+      answers = [];
       showNextQuestion();
     }
 
@@ -150,13 +159,9 @@
         return;
       }
 
-      let qData = questions[currentQuestion];
-      if (typeof qData === 'string' && branchQuestions[qData]) {
-        qData = branchQuestions[qData][userInfo.experience];
-      }
-
+      const qData = questions[currentQuestion];
       const qDiv = document.createElement('div');
-      qDiv.className = 'container';
+      qDiv.className = 'container show';
 
       const qTitle = document.createElement('p');
       qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${qData.text}`;
@@ -168,6 +173,7 @@
         btn.onclick = () => {
           answers.push(opt);
           currentQuestion++;
+          qDiv.remove();
           showNextQuestion();
         };
         qDiv.appendChild(btn);
@@ -178,7 +184,7 @@
 
     function showResult() {
       document.getElementById('questions').innerHTML = '';
-      document.getElementById('result').style.display = 'flex';
+      document.getElementById('result').classList.add('show');
 
       const score = answers.filter(a => burnoutKeywords.some(word => a.includes(word))).length;
       const result = resultTypes.find(r => r.condition(score));
@@ -189,9 +195,16 @@
 
     function copyResult() {
       const text = document.getElementById('resultText').innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        alert('결과가 복사되었어요! 친구한테 붙여넣기로 공유해보세요 💬');
+      const url = window.location.href;
+      navigator.clipboard.writeText(`${text}\n\n테스트 해보기 👉 ${url}`).then(() => {
+        alert('결과와 링크가 복사되었어요! 붙여넣기로 공유해보세요 🎉');
       });
+    }
+
+    function shareKakao() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent("나는 공무원을 계속할 상인가? 테스트 결과를 확인해보세요!");
+      window.open(`https://sharer.kakao.com/talk/friends/picker/link?app_key=test&template_json=${text}%20${url}`);
     }
   </script></body>
 </html>
