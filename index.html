@@ -29,7 +29,7 @@
       align-items: center;
     }
     .container.show {
-      display: flex;
+      displa3y: flex;
     }
     h1, h2, p {
       margin-bottom: 12px;
@@ -53,16 +53,14 @@
       border: 1px solid #ccc;
     }
     .comment {
-      font-size: 13px;
-      color: #999;
-      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
     }
     #result img {
-      width: 80%;
-      max-width: 280px;
-      margin-bottom: 16px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 120px;
+      margin-bottom: 10px;
+      border-radius: 8px;
     }
   </style>
 </head>
@@ -77,104 +75,103 @@
       <option value="8년 이상">🧘 8년 이상</option>
     </select>
     <button onclick="saveUserInfo()">테스트 시작하기</button>
-  </div>
-  <div class="container" id="intro">
+  </div>  <div class="container" id="intro">
     <h1>공무원 DNA 테스트 🧬</h1>
     <p>나는 공무원을 계속할 상인가?</p>
     <button onclick="startTest()">시작!</button>
     <div class="comment">* 본 테스트는 재미용입니다 :)</div>
-  </div>
-  <div id="questions"></div>
-  <div class="container" id="result">
+  </div>  <div id="questions"></div>  <div class="container" id="result">
     <h2>🎯 당신의 결과는?</h2>
     <img id="resultImage" src="" alt="결과 이미지">
     <p id="resultText"></p>
     <button onclick="copyResult()">🔗 결과 복사</button>
     <button onclick="shareKakao()">💬 카카오톡 공유</button>
     <button onclick="location.reload()">🔁 다시 하기</button>
-    <div class="comment">
-      Made by <strong>JINO</strong><br>
-      #출근고민만100번째 #내면분투형
-    </div>
+<!-- 만든 사람 정보 -->
+  <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
+  <strong>JINO</strong><br>
+  #출근고민만100번째 #내면분투형
+</div>
   </div>  <script>
     let userInfo = {};
     let answers = [];
     let currentQuestion = 0;
 
-    const burnoutKeywords = ["회의감", "퇴사", "회식…", "몰랐던 척", "정년"];
-
-    const experienceLevels = {
-      "1년 미만": "newbie",
-      "1~3년": "mid",
-      "4~7년": "mid",
-      "8년 이상": "senior"
-    };
-
-    const dynamicQuestions = {
-      Q3: {
-        newbie: { text: "요즘 공직생활 어때?", options: ["🙃 아직 적응 중이에요", "🤯 벌써 퇴사각", "🤓 새로 배우는 게 재밌어요"] },
-        mid:    { text: "요즘 동료들이랑은 어때?", options: ["😌 그냥저냥 무난", "🤬 눈치+정치+피로 그 자체", "🙃 출근만 따로 하고 싶어요"] },
-        senior: { text: "공직생활 8년차, 나는...", options: ["🧘 흐름만 보면 다 보여요", "🤕 후배들 보면 내가 옛날 생각나요", "🔥 조직개혁의 불꽃을 다시 켤까?"] }
-      },
-      Q7: {
-        newbie: { text: "부서 이동 얘기가 나오면?", options: ["😱 벌써요?!", "🤔 그냥 보내주세요...", "🧭 아직 여긴 어디 나는 누구"] },
-        mid:    { text: "부서 이동 얘기가 나오면?", options: ["🧳 다른 부서도 가보고 싶긴 함", "😤 누가 나 밀어내는 건가?", "🙃 익숙한 게 좋아요"] },
-        senior: { text: "부서 이동 얘기가 나오면?", options: ["🧘 어디든 상관없습니다", "🤖 어차피 다 거기서 거기", "🔁 반복되는 인사이동… 이제 체념"] }
-      },
-      Q11: {
-        newbie: { text: "공무원 되길 잘했다고 느낄 때는?", options: ["📅 월급일", "🧘 주말에 출근 안 할 때", "🙋 아직은 모르겠어요"] },
-        mid:    { text: "공무원 되길 잘했다고 느낄 때는?", options: ["🏖️ 연가 쓸 때", "😎 신입들 부러워할 때", "🧾 제도나 절차 잘 이해될 때"] },
-        senior: { text: "공무원 되길 잘했다고 느낄 때는?", options: ["👏 후배들이 내 말에 수긍할 때", "🤓 정책 흐름이 술술 읽힐 때", "💰 정년이 보장될 때"] }
-      }
-    };
-
-    const staticQuestions = [
-      { text: "퇴근 후 당신의 모습은?", options: ["📚 오늘도 자기계발!", "🛏️ 침대와 혼연일체", "🍕 넷플릭스+배달앱 콜라보", "🤯 회의감에 빠짐"] },
-      { text: "당신이 주로 쓰는 말은?", options: ["결재 드렸습니다.", "이게 다 시민을 위한 일이죠.", "오늘은 누가 또 터뜨렸나…", "한숨만 나와요"] },
-      {}, // Q3 placeholder
-      { text: "민원 전화를 받을 때 당신은?", options: ["🙇 네 고객님... 아니 시민님...", "🙄 또 이분이시네", "🤬 이건 정말 선 넘은 거 아냐?", "🤖 감정 OFF, 업무 ON"] },
-      { text: "회식 소식이 들리면?", options: ["🎉 오랜만에 사람들과 수다 떨 기회", "🤔 누구 오는지 먼저 확인", "😩 또 회식…", "🙈 몰랐던 척 조용히 집 간다"] },
-      { text: "요즘 일 어때?", options: ["😊 보람 있어", "😕 말하면 길어", "😩 그냥 버티는 중", "🙄 또 그 얘기야?"] },
-      {}, // Q7 placeholder
-      { text: "나에게 공무원이라는 일은...", options: ["💼 사회를 지탱하는 책임감 있는 일", "💸 안정적이라 선택한 생계형 직업", "😶‍🌫️ 의미는 점점 흐려지는 중", "🎭 일과 나를 분리한 이중생활"] },
-      { text: "요즘 내 퇴사 욕구는?", options: ["💣 매우 높음 – 퇴사 각", "🔥 가끔 욱하지만 참음", "🧊 낮음 – 안정 최고", "😇 없음 – 나는 공무원이 천직"] },
-      {}, // Q11 placeholder
-      { text: "일할 때 가장 버거운 건?", options: ["📋 끊임없는 행정처리", "🙅‍♀️ 말 안 통하는 민원", "🔁 끝없는 보고 루틴", "🧊 감정 없는 조직문화"] },
-      { text: "업무 스트레스가 쌓이면?", options: ["🍺 맥주 한 캔으로 푸는 편", "😴 자고 일어나면 잊음", "🧘‍♀️ 명상/운동/산책 등으로 풀기", "😭 그냥 운다"] }
-    ];
-
     const resultTypes = [
       {
-        name: '천직형 🌈',
+        name: '천직형 🌟',
         desc: '안정과 루틴을 사랑하는 천직형! 당신은 공직 DNA 그 자체입니다.',
-        image: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070019%20(1).png',
-        condition: a => a <= 2
+        condition: a => a <= 3
       },
       {
-        name: '내면분투형 🌀',
-        desc: '대외적으론 무던하지만 내면은 회의감 가득. 주말에만 살아있는 느낌?',
-        image: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/file_000000003ab861f9b0555ad3a325e417.png',
-        condition: a => a <= 4
+        name: '내면 분투형 🌀',
+        desc: '겉으로는 멀쩡, 속은 복잡한 고민의 연속. 늘 출근길에 생각이 많다.',
+        condition: a => a <= 6
       },
       {
         name: '갈팡질팡형 🤹‍♀️',
         desc: '이직과 안정 사이에서 고민 중. 매일 출근 전 한숨을 쉰다면 당신!',
-        image: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_063752.png',
-        condition: a => a <= 6
+        condition: a => a <= 9
       },
       {
         name: '번아웃형 🔥',
         desc: '이미 마음은 퇴사 중... 현실은 계속 근무 중... 휴식이 필요해요!',
-        image: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070136.png',
-        condition: a => a <= 9
+        condition: a => a <= 11
       },
       {
         name: '퇴사각형 💣',
         desc: '지금 안 그만두면 병날 것 같다면? 이 테스트 끝나고 바로 명상 ㄱ',
-        image: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_064207.png',
         condition: a => a <= 13
       }
     ];
+
+    const imageMap = {
+  '갈팡질팡형 🤹‍♀️': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_063752.png',
+  '퇴사각형 💣': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_064207.png',
+  '천직형 🌟': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070019%20(1).png',
+  '번아웃형 🔥': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070136.png',
+  '내면 분투형 🌀': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/file_000000003ab861f9b0555ad3a325e417.png'
+};
+
+    const burnoutKeywords = ["회의감", "퇴사", "회식…", "몰랐던 척", "정년", "버티는 중", "마감 직전"];
+
+    const baseQuestions = [
+      { text: "퇴근 후 당신의 모습은?", options: ["📚 오늘도 자기계발!", "🛏️ 침대와 혼연일체", "🍕 넷플릭스+배달앱 콜라보", "🤯 회의감에 빠짐"] },
+      { text: "당신이 주로 쓰는 말은?", options: ["이건 왜 이렇게 비효율적이죠?", "결재 드렸습니다.", "이게 다 시민을 위한 일이죠.", "오늘은 누가 또 터뜨렸나…"] },
+      { branch: true },
+      { text: "당신의 업무 몰입 스타일은?", options: ["😤 일단 끝내고 나중에 쉰다", "🧘 중간중간 쉬는 게 중요하다", "🤹‍♀️ 몇 가지 일을 동시에 처리한다", "🙈 딴짓하다 마감 직전 몰아친다"] },
+      { text: "회의할 때 나는 어떤 사람?", options: ["📣 적극적으로 의견을 낸다", "📝 메모하고 듣는 편이다", "🫥 질문 받을까 봐 조마조마", "🙃 이미 멍 때리는 중"] },
+      { text: "보고서를 쓸 때 나는?", options: ["🧐 구조부터 치밀하게 짠다", "😓 빈 화면 앞에서 멍…", "🙋 사례부터 긁어온다", "😇 선배 문서 복붙 + 살짝 수정"] },
+      { branch: true },
+      { text: "회식 소식이 들리면?", options: ["🎉 오랜만에 사람들과 수다 떨 기회", "🤔 누구 오는지 먼저 확인", "😩 또 회식…", "🙈 몰랐던 척 조용히 집 간다"] },
+      { text: "\"요즘 일 어때?\"라는 친구 질문에 대한 속마음은?", options: ["😊 보람 있어", "😕 말하면 길어", "😩 그냥 버티는 중", "🙄 또 그 얘기야?"] },
+      { text: "나에게 공무원이라는 일은...", options: ["💼 사회를 지탱하는 책임감 있는 일", "💸 안정적이라 선택한 생계형 직업", "😶‍🌫️ 의미는 점점 흐려지는 중", "🎭 일과 나를 분리한 이중생활"] },
+      { branch: true },
+      { text: "요즘 내 퇴사 욕구는?", options: ["💣 매우 높음 – 퇴사 각", "🔥 가끔 욱하지만 참음", "🧊 낮음 – 안정 최고", "😇 없음 – 나는 공무원이 천직"] }
+    ];
+
+    const branchQuestions = {
+      "1년 미만": [
+        { text: "요즘 공직생활 어때?", options: ["🙃 아직 적응 중이에요", "🤯 벌써 퇴사각", "🤓 새로 배우는 게 재밌어요"] },
+        { text: "부서 이동 얘기가 나오면?", options: ["😱 벌써요?!", "🤔 그냥 보내주세요...", "🧭 아직 여긴 어디 나는 누구"] },
+        { text: "공무원 되길 잘했다고 느낄 때는?", options: ["📅 월급일", "🧘 주말에 출근 안 할 때", "🙋 아직은 모르겠어요"] }
+      ],
+      "1~3년": [
+        { text: "요즘 동료들이랑은 어때?", options: ["😌 그냥저냥 무난", "🤬 눈치+정치+피로 그 자체", "🙃 출근만 따로 하고 싶어요"] },
+        { text: "부서 이동 얘기가 나오면?", options: ["🧳 다른 부서도 가보고 싶긴 함", "😤 누가 나 밀어내는 건가?", "🙃 익숙한 게 좋아요"] },
+        { text: "공무원 되길 잘했다고 느낄 때는?", options: ["🏖️ 연가 쓸 때", "😎 신입들 부러워할 때", "🧾 제도나 절차 잘 이해될 때"] }
+      ],
+      "4~7년": [
+        { text: "요즘 동료들이랑은 어때?", options: ["😌 그냥저냥 무난", "🤬 눈치+정치+피로 그 자체", "🙃 출근만 따로 하고 싶어요"] },
+        { text: "부서 이동 얘기가 나오면?", options: ["🧳 다른 부서도 가보고 싶긴 함", "😤 누가 나 밀어내는 건가?", "🙃 익숙한 게 좋아요"] },
+        { text: "공무원 되길 잘했다고 느낄 때는?", options: ["🏖️ 연가 쓸 때", "😎 신입들 부러워할 때", "🧾 제도나 절차 잘 이해될 때"] }
+      ],
+      "8년 이상": [
+        { text: "공직생활 8년차, 나는...", options: ["🧘 흐름만 보면 다 보여요", "🤕 후배들 보면 내가 옛날 생각나요", "🔥 조직개혁의 불꽃을 다시 켤까?"] },
+        { text: "부서 이동 얘기가 나오면?", options: ["🧘 어디든 상관없습니다", "🤖 어차피 다 거기서 거기", "🔁 반복되는 인사이동… 이제 체념"] },
+        { text: "공무원 되길 잘했다고 느낄 때는?", options: ["👏 후배들이 내 말에 수긍할 때", "🤓 정책 흐름이 술술 읽힐 때", "💰 정년이 보장될 때"] }
+      ]
+    };
 
     function saveUserInfo() {
       const exp = document.getElementById('experience').value;
@@ -194,27 +191,27 @@
       const qWrap = document.getElementById('questions');
       qWrap.innerHTML = '';
 
-      if (currentQuestion >= staticQuestions.length) {
+      if (currentQuestion >= baseQuestions.length) {
         showResult();
         return;
+      }
+
+      const qData = baseQuestions[currentQuestion];
+
+      let finalQ = qData;
+      if (qData.branch) {
+        const branchSet = branchQuestions[userInfo.experience];
+        finalQ = branchSet.shift();
       }
 
       const qDiv = document.createElement('div');
       qDiv.className = 'container show';
 
-      let qData = staticQuestions[currentQuestion];
-
-      if ([2,6,10].includes(currentQuestion)) {
-        const key = Object.keys(dynamicQuestions)[[2,6,10].indexOf(currentQuestion)];
-        const level = experienceLevels[userInfo.experience];
-        qData = dynamicQuestions[key][level];
-      }
-
       const qTitle = document.createElement('p');
-      qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${qData.text}`;
+      qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${finalQ.text}`;
       qDiv.appendChild(qTitle);
 
-      qData.options.forEach(opt => {
+      finalQ.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.innerText = opt;
         btn.onclick = () => {
@@ -236,7 +233,7 @@
       const score = answers.filter(a => burnoutKeywords.some(word => a.includes(word))).length;
       const result = resultTypes.find(r => r.condition(score));
 
-      document.getElementById('resultImage').src = result.image;
+      document.getElementById('resultImage').src = imageMap[result.name];
       document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
     }
 
@@ -255,3 +252,5 @@
     }
   </script></body>
 </html>
+
+왜 재생이 안되지?
