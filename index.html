@@ -946,16 +946,12 @@ function copyResult() {
 
 // 카카오톡 공유 함수
 function shareKakao() {
-  // 현재 결과 텍스트 가져오기
-  const resultText = document.getElementById('resultText').innerText;
-  const resultName = resultText.split('\n')[0]; // 결과 유형만 추출
-
   Kakao.Link.sendDefault({
     objectType: 'feed',
     content: {
       title: '나는 공무원을 계속할 상인가?',
-      description: `테스트 결과: ${resultName}`,
-      imageUrl: document.getElementById('resultImage').src,
+      description: '테스트 결과를 확인해보세요!',
+      imageUrl: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/unnamed.png',
       link: {
         mobileWebUrl: window.location.href,
         webUrl: window.location.href
