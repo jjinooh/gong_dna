@@ -6,8 +6,9 @@
   <title>공무원 DNA 테스트</title>
   <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
   <script>
-    Kakao.init('3138aed7cfa6cb0fbdca2b0e71a77461'); // JavaScript 키
+  Kakao.init('3138aed7cfa6cb0fbdca2b0e71a77461');
   </script>
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -32,7 +33,6 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      box-sizing: border-box;
     }
     .container.show {
       display: flex;
@@ -50,16 +50,13 @@
       color: white;
       cursor: pointer;
       width: 80%;
-      max-width: 300px;
     }
     select {
       padding: 8px;
       width: 80%;
-      max-width: 300px;
       font-size: 14px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      margin-bottom: 15px;
     }
     .comment {
       font-size: 12px;
@@ -68,173 +65,77 @@
     }
     #result img {
       width: 120px;
-      height: auto;
       margin-bottom: 10px;
       border-radius: 8px;
-    }
-    #resultText {
-      white-space: pre-wrap;
-      margin-bottom: 20px;
-      font-size: 16px;
-      font-weight: bold;
-      line-height: 1.5;
     }
   </style>
 </head>
 <body>
-
-<div class="container show" id="userinfo">
-  <h2>공직 경력 체크</h2>
-  <p>당신의 공직 연차를 알려주세요!</p>
-  <select id="experience">
-    <option value="1년 미만">🍼 1년 미만</option>
-    <option value="1~3년">🌱 1~3년</option>
-    <option value="4~7년">🌳 4~7년</option>
-    <option value="8년 이상">🧘 8년 이상</option>
-  </select>
-  <button onclick="saveUserInfo()">테스트 시작하기</button>
-</div>
-
-<div class="container" id="intro">
-  <h1>공무원 DNA 테스트 🧬</h1>
-  <p>나는 공무원을 계속할 상인가?</p>
-  <button onclick="startTest()">시작!</button>
-  <div class="comment">* 본 테스트는 재미용입니다 :)</div>
-</div>
-
-<div id="questions"></div>
-
-<div class="container" id="result">
-  <h2>🎯 당신의 결과는?</h2>
-  <img id="resultImage" src="" alt="결과 이미지">
-  <p id="resultText"></p>
-  <button onclick="copyResult()">🔗 결과 복사</button>
-  <button onclick="shareKakao()">💬 카카오톡 공유</button>
-  <button onclick="location.reload()">🔁 다시 하기</button>
-  <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
-    기획 · 제작: <strong>JINO</strong><br>
-    #출근고민만100번째 #이럴려고공시했나자괴감들고
+  <div class="container show" id="userinfo">
+    <h2>공직 경력 체크</h2>
+    <p>당신의 공직 연차를 알려주세요!</p>
+    <select id="experience">
+      <option value="1년 미만">🍼 1년 미만</option>
+      <option value="1~3년">🌱 1~3년</option>
+      <option value="4~7년">🌳 4~7년</option>
+      <option value="8년 이상">🧘 8년 이상</option>
+    </select>
+    <button onclick="saveUserInfo()">테스트 시작하기</button>
   </div>
-</div>
-
-<script>
-let userInfo = {};
-let answers = [];
-let currentQuestion = 0;
-
-const baseQuestions = [
-      { 
-        text: "퇴근 후 당신의 모습은?", 
-        options: [
-          { text: "📚 오늘도 자기계발!", score: 0 },
-          { text: "🛏️ 침대와 혼연일체", score: 1 },
-          { text: "🍕 넷플릭스+배달앱 콜라보", score: 2 },
-          { text: "🤯 회의감에 빠짐", score: 3 }
-        ] 
-      },
-      { 
-        text: "당신이 주로 쓰는 말은?", 
-        options: [
-          { text: "이건 왜 이렇게 비효율적이죠?", score: 1 },
-          { text: "결재 드렸습니다.", score: 0 },
-          { text: "이게 다 시민을 위한 일이죠.", score: 0 },
-          { text: "오늘은 누가 또 터뜨렸나…", score: 2 }
-        ] 
-      },
-      { branch: true, key: "q2Map" }, /* q2Map에서 해당 연차 질문 가져옴 */
-      { 
-        text: "당신의 업무 몰입 스타일은?", 
-        options: [
-          { text: "😤 일단 끝내고 나중에 쉰다", score: 0 },
-          { text: "🧘 중간중간 쉬는 게 중요하다", score: 1 },
-          { text: "🤹‍♀️ 몇 가지 일을 동시에 처리한다", score: 1 },
-          { text: "🙈 딴짓하다 마감 직전 몰아친다", score: 3 }
-        ] 
-      },
-      { 
-        text: "회의할 때 나는 어떤 사람?", 
-        options: [
-          { text: "📣 적극적으로 의견을 낸다", score: 0 },
-          { text: "📝 메모하고 듣는 편이다", score: 1 },
-          { text: "😓 질문 받을까 봐 조마조마", score: 2 },
-          { text: "🙃 이미 멍 때리는 중", score: 3 }
-        ] 
-      },
-      { 
-        text: "보고서를 쓸 때 나는?", 
-        options: [
-          { text: "🧐 구조부터 치밀하게 짠다", score: 0 },
-          { text: "😓 빈 화면 앞에서 멍…", score: 2 },
-          { text: "🙋 사례부터 긁어온다", score: 1 },
-          { text: "😇 선배 문서 복붙 + 살짝 수정", score: 2 }
-        ] 
-      },
-      { branch: true, key: "branchQuestions" }, /* branchQuestions에서 해당 연차 질문 가져옴 */
-      { 
-        text: "회식 소식이 들리면?", 
-        options: [
-          { text: "🎉 오랜만에 사람들과 수다 떨 기회", score: 0 },
-          { text: "🤔 누구 오는지 먼저 확인", score: 1 },
-          { text: "😩 또 회식…", score: 2 },
-          { text: "🙈 몰랐던 척 조용히 집 간다", score: 3 }
-        ] 
-      },
-      { 
-        text: "\"요즘 일 어때?\"라는 친구 질문에 대한 속마음은?", 
-        options: [
-          { text: "😊 보람 있어", score: 0 },
-          { text: "😕 말하면 길어", score: 1 },
-          { text: "😩 그냥 버티는 중", score: 2 },
-          { text: "🙄 또 그 얘기야?", score: 3 }
-        ] 
-      },
-      { 
-        text: "나에게 공무원이라는 일은...", 
-        options: [
-          { text: "💼 사회를 지탱하는 책임감 있는 일", score: 0 },
-          { text: "💸 안정적이라 선택한 생계형 직업", score: 1 },
-          { text: "😶‍🌫️ 의미는 점점 흐려지는 중", score: 2 },
-          { text: "🎭 일과 나를 분리한 이중생활", score: 3 }
-        ] 
-      },
-      { branch: true, key: "branchQuestions2" }, /* 추가 분기 질문 필요 시 */
-      { 
-        text: "요즘 내 퇴사 욕구는?", 
-        options: [
-          { text: "💣 매우 높음 – 퇴사 각", score: 3 },
-          { text: "🔥 가끔 욱하지만 참음", score: 2 },
-          { text: "🧊 낮음 – 안정 최고", score: 1 },
-          { text: "😇 없음 – 나는 공무원이 천직", score: 0 }
-        ] 
-      }
-    ];
-
-    // 연차별 고유 질문 (q2Map) - 옵션에 점수 직접 부여
+  
+  <div class="container" id="intro">
+    <h1>공무원 DNA 테스트 🧬</h1>
+    <p>나는 공무원을 계속할 상인가?</p>
+    <button onclick="startTest()">시작!</button>
+    <div class="comment">* 본 테스트는 재미용입니다 :)</div>
+  </div>
+  
+  <div id="questions"></div>
+  
+  <div class="container" id="result">
+    <h2>🎯 당신의 결과는?</h2>
+    <img id="resultImage" src="" alt="결과 이미지">
+    <p id="resultText"></p>
+    <button onclick="copyResult()">🔗 결과 복사</button>
+    <button onclick="shareKakao()">💬 카카오톡 공유</button>
+    <button onclick="location.reload()">🔁 다시 하기</button>
+    <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
+      Made by <strong>JINO</strong><br>
+      #출근고민만100번째 #내면분투형
+    </div>
+  </div>
+  
+  <script>
+    let userInfo = {};
+    let answers = [];
+    let currentQuestion = 0;
+    let totalScore = 0;
+    
     const q2Map = {
       "1년 미만": {
         text: "요즘 당신 입에서 자주 나오는 말은?",
         options: [
-          { text: "아직도 헷갈려요...", score: 1 },
+          { text: "아직도 헷갈려요...", score: 0 },
           { text: "혹시 이것도 제가 할까요?", score: 0 },
-          { text: "매뉴얼이랑 실제가 너무 달라요", score: 2 },
+          { text: "매뉴얼이랑 실제가 너무 달라요", score: 1 },
           { text: "오…이걸 저한테요?", score: 1 }
         ]
       },
       "1~3년": {
         text: "요즘 당신 입에서 자주 나오는 말은?",
         options: [
-          { text: "그건 제가 담당이 아닌데요…", score: 1 },
+          { text: "그건 제가 담당이 아닌데요…", score: 2 },
           { text: "결재 드렸습니다", score: 0 },
-          { text: "이거 왜 또 바꼈어요?", score: 2 },
+          { text: "이거 왜 또 바꼈어요?", score: 1 },
           { text: "매뉴얼 어디 있어요?", score: 1 }
         ]
       },
       "4~7년": {
         text: "요즘 당신 입에서 자주 나오는 말은?",
         options: [
-          { text: "그건 제가 담당이 아닌데요…", score: 1 },
+          { text: "그건 제가 담당이 아닌데요…", score: 2 },
           { text: "결재 드렸습니다", score: 0 },
-          { text: "이거 왜 또 바꼈어요?", score: 2 },
+          { text: "이거 왜 또 바꼈어요?", score: 1 },
           { text: "매뉴얼 어디 있어요?", score: 1 }
         ]
       },
@@ -243,13 +144,239 @@ const baseQuestions = [
         options: [
           { text: "그거 옛날에도 문제 있었어", score: 1 },
           { text: "내가 말했잖아 그때", score: 1 },
-          { text: "또 바뀌었대요. 지침 내려온대", score: 1 },
+          { text: "또 바뀌었대요. 지침 내려온대", score: 0 },
           { text: "안 그래도 보고 있었어요", score: 0 }
         ]
       }
     };
+    
+    function getQ2ByExperience(exp) {
+      return q2Map[exp];
+    }
+    
+        const resultTypes = [
+      {
+        name: '천직형 🌟',
+        desc: '안정과 루틴을 사랑하는 천직형! 당신은 공직 DNA 그 자체입니다.',
+        condition: a => a <= 5
+      },
+      {
+        name: '내면 분투형 🌀',
+        desc: '겉으로는 멀쩡, 속은 복잡한 고민의 연속. 늘 출근길에 생각이 많다.',
+        condition: a => a <= 10
+      },
+      {
+        name: '갈팡질팡형 🤹‍♀️',
+        desc: '이직과 안정 사이에서 고민 중. 매일 출근 전 한숨을 쉰다면 당신!',
+        condition: a => a <= 15
+      },
+      {
+        name: '번아웃형 🔥',
+        desc: '이미 마음은 퇴사 중... 현실은 계속 근무 중... 휴식이 필요해요!',
+        condition: a => a <= 20
+      },
+      {
+        name: '퇴사각형 💣',
+        desc: '지금 안 그만두면 병날 것 같다면? 이 테스트 끝나고 바로 명상 ㄱ',
+        condition: a => a <= 25
+      }
+    ];
 
-    // 연차별 분기 질문 (branchQuestions) - 옵션에 점수 직접 부여
+    const imageMap = {
+      '갈팡질팡형 🤹‍♀️': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_063752.png',
+      '퇴사각형 💣': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_064207.png',
+      '천직형 🌟': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070019%20(1).png',
+      '번아웃형 🔥': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070136.png',
+      '내면 분투형 🌀': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/file_000000003ab861f9b0555ad3a325e417.png'
+    };
+
+    // 점수 부여 시스템 - 각 답변에 점수 할당
+    const optionScores = {
+      // 기본 질문들
+      "퇴근 후 당신의 모습은?": {
+        "📚 오늘도 자기계발!": 0,
+        "🛏️ 침대와 혼연일체": 1,
+        "🍕 넷플릭스+배달앱 콜라보": 1,
+        "🤯 회의감에 빠짐": 3
+      },
+      "당신이 주로 쓰는 말은?": {
+        "이건 왜 이렇게 비효율적이죠?": 1,
+        "결재 드렸습니다.": 0,
+        "이게 다 시민을 위한 일이죠.": 0,
+        "오늘은 누가 또 터뜨렸나…": 2
+      },
+      "당신의 업무 몰입 스타일은?": {
+        "😤 일단 끝내고 나중에 쉰다": 0,
+        "🧘 중간중간 쉬는 게 중요하다": 1,
+        "🤹‍♀️ 몇 가지 일을 동시에 처리한다": 1,
+        "🙈 딴짓하다 마감 직전 몰아친다": 3
+      },
+      "회의할 때 나는 어떤 사람?": {
+        "📣 적극적으로 의견을 낸다": 0,
+        "📝 메모하고 듣는 편이다": 1,
+        "😓 질문 받을까 봐 조마조마": 2,
+        "🙃 이미 멍 때리는 중": 3
+      },
+      "보고서를 쓸 때 나는?": {
+        "🧐 구조부터 치밀하게 짠다": 0,
+        "😓 빈 화면 앞에서 멍…": 3,
+        "🙋 사례부터 긁어온다": 1,
+        "😇 선배 문서 복붙 + 살짝 수정": 2
+      },
+      "회식 소식이 들리면?": {
+        "🎉 오랜만에 사람들과 수다 떨 기회": 0,
+        "🤔 누구 오는지 먼저 확인": 1,
+        "😩 또 회식…": 2,
+        "🙈 몰랐던 척 조용히 집 간다": 3
+      },
+      "\"요즘 일 어때?\"라는 친구 질문에 대한 속마음은?": {
+        "😊 보람 있어": 0,
+        "😕 말하면 길어": 1,
+        "😩 그냥 버티는 중": 3,
+        "🙄 또 그 얘기야?": 2
+      },
+      "나에게 공무원이라는 일은...": {
+        "💼 사회를 지탱하는 책임감 있는 일": 0,
+        "💸 안정적이라 선택한 생계형 직업": 1,
+        "😶‍🌫️ 의미는 점점 흐려지는 중": 2,
+        "🎭 일과 나를 분리한 이중생활": 3
+      },
+      "요즘 내 퇴사 욕구는?": {
+        "💣 매우 높음 – 퇴사 각": 3,
+        "🔥 가끔 욱하지만 참음": 2,
+        "🧊 낮음 – 안정 최고": 1,
+        "😇 없음 – 나는 공무원이 천직": 0
+      },
+      
+      // 1년 미만 경력자 질문
+      "요즘 공직생활 어때?": {
+        "🙃 아직 적응 중이에요": 1,
+        "🤯 벌써 퇴사각": 3,
+        "🤓 새로 배우는 게 재밌어요": 0
+      },
+            "부서 이동 얘기가 나오면?": {
+        "😱 벌써요?!": 0,
+        "🤔 그냥 보내주세요...": 2,
+        "🧭 여긴 어디 나는 누구": 1
+      },
+      "공무원 되길 잘했다고 느낄 때는?": {
+        "📅 월급일": 2,
+        "🧘 주말에 출근 안 할 때": 1,
+        "🙋 아직은 모르겠어요": 1
+      },
+      
+      // 1~3년 경력자 질문
+      "요즘 동료들이랑은 어때?": {
+        "😌 그냥저냥 무난": 1,
+        "🤬 눈치+정치+피로 그 자체": 3,
+        "🙃 출근만 따로 하고 싶어요": 2
+      },
+      "공무원 되길 잘했다고 느낄 때는?": {
+        "🏖️ 연가 쓸 때": 2,
+        "😎 신입들이 부러워할 때": 1,
+        "🧾 제도나 절차 잘 이해될 때": 0
+      },
+      
+      // 8년 이상 경력자 질문
+      "공직생활 8년차, 나는...": {
+        "🧘 흐름만 보면 다 보여요": 0,
+        "🤕 후배들 보면 내가 옛날 생각나요": 1,
+        "🔥 조직개혁의 불꽃을 다시 켤까?": 2
+      },
+      "공무원 되길 잘했다고 느낄 때는?": {
+        "👏 남들이 부러워할 때": 1,
+        "🤓 정책 흐름이 술술 읽힐 때": 0,
+        "💰 정년이 보장될 때": 2
+      }
+    };
+
+    const baseQuestions = [
+      {
+        text: "퇴근 후 당신의 모습은?",
+        options: [
+          { text: "📚 오늘도 자기계발!", score: 0 },
+          { text: "🛏️ 침대와 혼연일체", score: 1 },
+          { text: "🍕 넷플릭스+배달앱 콜라보", score: 1 },
+          { text: "🤯 회의감에 빠짐", score: 3 }
+        ]
+      },
+      { 
+        text: "당신이 주로 쓰는 말은?",
+        options: [
+          { text: "이건 왜 이렇게 비효율적이죠?", score: 1 },
+          { text: "결재 드렸습니다.", score: 0 },
+          { text: "이게 다 시민을 위한 일이죠.", score: 0 },
+          { text: "오늘은 누가 또 터뜨렸나…", score: 2 }
+        ]
+      },
+      { branch: true },
+      {
+        text: "당신의 업무 몰입 스타일은?",
+        options: [
+          { text: "😤 일단 끝내고 나중에 쉰다", score: 0 },
+          { text: "🧘 중간중간 쉬는 게 중요하다", score: 1 },
+          { text: "🤹‍♀️ 몇 가지 일을 동시에 처리한다", score: 1 },
+          { text: "🙈 딴짓하다 마감 직전 몰아친다", score: 3 }
+        ]
+      },
+      {
+        text: "회의할 때 나는 어떤 사람?",
+        options: [
+          { text: "📣 적극적으로 의견을 낸다", score: 0 },
+          { text: "📝 메모하고 듣는 편이다", score: 1 },
+          { text: "😓 질문 받을까 봐 조마조마", score: 2 },
+          { text: "🙃 이미 멍 때리는 중", score: 3 }
+        ]
+      },
+      {
+        text: "보고서를 쓸 때 나는?",
+        options: [
+          { text: "🧐 구조부터 치밀하게 짠다", score: 0 },
+          { text: "😓 빈 화면 앞에서 멍…", score: 3 },
+          { text: "🙋 사례부터 긁어온다", score: 1 },
+          { text: "😇 선배 문서 복붙 + 살짝 수정", score: 2 }
+        ]
+      },
+      { branch: true },
+      {
+        text: "회식 소식이 들리면?",
+        options: [
+          { text: "🎉 오랜만에 사람들과 수다 떨 기회", score: 0 },
+          { text: "🤔 누구 오는지 먼저 확인", score: 1 },
+          { text: "😩 또 회식…", score: 2 },
+          { text: "🙈 몰랐던 척 조용히 집 간다", score: 3 }
+        ]
+      },
+      {
+        text: "\"요즘 일 어때?\"라는 친구 질문에 대한 속마음은?",
+        options: [
+          { text: "😊 보람 있어", score: 0 },
+          { text: "😕 말하면 길어", score: 1 },
+          { text: "😩 그냥 버티는 중", score: 3 },
+          { text: "🙄 또 그 얘기야?", score: 2 }
+        ]
+      },
+      {
+        text: "나에게 공무원이라는 일은...",
+        options: [
+          { text: "💼 사회를 지탱하는 책임감 있는 일", score: 0 },
+          { text: "💸 안정적이라 선택한 생계형 직업", score: 1 },
+          { text: "😶‍🌫️ 의미는 점점 흐려지는 중", score: 2 },
+          { text: "🎭 일과 나를 분리한 이중생활", score: 3 }
+        ]
+      },
+      { branch: true },
+            {
+        text: "요즘 내 퇴사 욕구는?",
+        options: [
+          { text: "💣 매우 높음 – 퇴사 각", score: 3 },
+          { text: "🔥 가끔 욱하지만 참음", score: 2 },
+          { text: "🧊 낮음 – 안정 최고", score: 1 },
+          { text: "😇 없음 – 나는 공무원이 천직", score: 0 }
+        ]
+      }
+    ];
+
     const branchQuestions = {
       "1년 미만": [
         { 
@@ -258,23 +385,23 @@ const baseQuestions = [
             { text: "🙃 아직 적응 중이에요", score: 1 },
             { text: "🤯 벌써 퇴사각", score: 3 },
             { text: "🤓 새로 배우는 게 재밌어요", score: 0 }
-          ] 
+          ]
         },
         { 
           text: "부서 이동 얘기가 나오면?", 
           options: [
-            { text: "😱 벌써요?!", score: 1 },
+            { text: "😱 벌써요?!", score: 0 },
             { text: "🤔 그냥 보내주세요...", score: 2 },
             { text: "🧭 아직 여긴 어디 나는 누구", score: 1 }
-          ] 
+          ]
         },
         { 
           text: "공무원 되길 잘했다고 느낄 때는?", 
           options: [
-            { text: "📅 월급일", score: 1 },
+            { text: "📅 월급일", score: 2 },
             { text: "🧘 주말에 출근 안 할 때", score: 1 },
-            { text: "🙋 아직은 모르겠어요", score: 2 }
-          ] 
+            { text: "🙋 아직은 모르겠어요", score: 1 }
+          ]
         }
       ],
       "1~3년": [
@@ -284,23 +411,23 @@ const baseQuestions = [
             { text: "😌 그냥저냥 무난", score: 1 },
             { text: "🤬 눈치+정치+피로 그 자체", score: 3 },
             { text: "🙃 출근만 따로 하고 싶어요", score: 2 }
-          ] 
+          ]
         },
         { 
           text: "부서 이동 얘기가 나오면?", 
           options: [
-            { text: "🧳 다른 부서도 가보고 싶긴 함", score: 1 },
+            { text: "🧳 다른 부서도 가보고 싶긴 함", score: 0 },
             { text: "😤 누가 나 밀어내는 건가?", score: 2 },
-            { text: "🙃 익숙한 게 좋아요", score: 0 }
-          ] 
+            { text: "🙃 익숙한 게 좋아요", score: 1 }
+          ]
         },
         { 
           text: "공무원 되길 잘했다고 느낄 때는?", 
           options: [
-            { text: "🏖️ 연가 쓸 때", score: 1 },
-            { text: "😎 신입들이 부러워할 때", score: 0 },
+            { text: "🏖️ 연가 쓸 때", score: 2 },
+            { text: "😎 신입들이 부러워할 때", score: 1 },
             { text: "🧾 제도나 절차 잘 이해될 때", score: 0 }
-          ] 
+          ]
         }
       ],
       "4~7년": [
@@ -310,23 +437,23 @@ const baseQuestions = [
             { text: "😌 그냥저냥 무난", score: 1 },
             { text: "🤬 눈치+정치+피로 그 자체", score: 3 },
             { text: "🙃 출근만 따로 하고 싶어요", score: 2 }
-          ] 
+          ]
         },
         { 
           text: "부서 이동 얘기가 나오면?", 
           options: [
-            { text: "🧳 다른 부서도 가보고 싶긴 함", score: 1 },
+            { text: "🧳 다른 부서도 가보고 싶긴 함", score: 0 },
             { text: "😤 누가 나 밀어내는 건가?", score: 2 },
-            { text: "🙃 익숙한 게 좋아요", score: 0 }
-          ] 
+            { text: "🙃 익숙한 게 좋아요", score: 1 }
+          ]
         },
         { 
           text: "공무원 되길 잘했다고 느낄 때는?", 
           options: [
-            { text: "🏖️ 연가 쓸 때", score: 1 },
-            { text: "😎 신입들이 부러워할 때", score: 0 },
+            { text: "🏖️ 연가 쓸 때", score: 2 },
+            { text: "😎 신입들이 부러워할 때", score: 1 },
             { text: "🧾 제도나 절차 잘 이해될 때", score: 0 }
-          ] 
+          ]
         }
       ],
       "8년 이상": [
@@ -334,172 +461,127 @@ const baseQuestions = [
           text: "공직생활 8년차, 나는...", 
           options: [
             { text: "🧘 흐름만 보면 다 보여요", score: 0 },
-            { text: "🤕 후배들 보면 내가 옛날 생각나요", score: 1 },
+            { text: "🤕 후배들 보면 옛날 생각나요", score: 1 },
             { text: "🔥 조직개혁의 불꽃을 다시 켤까?", score: 2 }
-          ] 
+          ]
         },
         { 
           text: "부서 이동 얘기가 나오면?", 
           options: [
             { text: "🧘 어디든 상관없습니다", score: 0 },
             { text: "🤖 어차피 다 거기서 거기", score: 2 },
-            { text: "🔁 반복되는 인사이동… 이제 체념", score: 3 }
-          ] 
+            { text: "🔁 반복되는 인사이동… 이제 체념", score: 2 }
+          ]
         },
         { 
           text: "공무원 되길 잘했다고 느낄 때는?", 
           options: [
-            { text: "👏 남들이 부러워할 때", score: 0 },
+            { text: "👏 남들이 부러워할 때", score: 1 },
             { text: "🤓 정책 흐름이 술술 읽힐 때", score: 0 },
-            { text: "💰 정년이 보장될 때", score: 1 }
-          ] 
+            { text: "💰 정년이 보장될 때", score: 2 }
+          ]
         }
       ]
     };
-    
-    // 이 부분은 추가적인 분기 질문이 필요할 경우 사용합니다. (현재 사용 안 함)
-    const branchQuestions2 = {
-        "1년 미만": [
-            { text: "추가 1-1", options: [{ text: "선택1", score:0}, {text: "선택2", score:1}] }
-        ],
-        // ... 나머지 연차별 질문
-    };
 
-
-    // 결과 유형의 조건 (점수 범위 조정)
-    const resultTypes = [
-      {
-        name: '천직형 🌟',
-        desc: '안정과 루틴을 사랑하는 천직형! 당신은 공직 DNA 그 자체입니다.',
-        condition: a => a <= 5 // 5점 이하는 천직형
-      },
-      {
-        name: '내면 분투형 🌀',
-        desc: '겉으로는 멀쩡, 속은 복잡한 고민의 연속. 늘 출근길에 생각이 많다.',
-        condition: a => a > 5 && a <= 10 // 6~10점은 내면 분투형
-      },
-      {
-        name: '갈팡질팡형 🤹‍♀️',
-        desc: '이직과 안정 사이에서 고민 중. 매일 출근 전 한숨을 쉰다면 당신!',
-        condition: a => a > 10 && a <= 15 // 11~15점은 갈팡질팡형
-      },
-      {
-        name: '번아웃형 🔥',
-        desc: '이미 마음은 퇴사 중... 현실은 계속 근무 중... 휴식이 필요해요!',
-        condition: a => a > 15 && a <= 20 // 16~20점은 번아웃형
-      },
-      {
-        name: '퇴사각형 💣',
-        desc: '지금 안 그만두면 병날 것 같다면? 이 테스트 끝나고 바로 명상 ㄱ',
-        condition: a => a > 20 // 21점 이상은 퇴사각형
-      }
-    ];
-
-    // 결과 이미지 매핑 (GitHub 레포에서 이미지를 가져옵니다)
-    const imageMap = {
-      '갈팡질팡형 🤹‍♀️': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/main/PENUP_20250802_063752.png',
-      '퇴사각형 💣': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/main/PENUP_20250802_064207.png',
-      '천직형 🌟': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/main/PENUP_20250802_070019%20(1).png',
-      '번아웃형 🔥': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/main/PENUP_20250802_070136.png',
-      '내면 분투형 🌀': 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/main/file_000000003ab861f9b0555ad3a325e417.png'
-    };
-
-// 시작 버튼 → 인트로 진입
-function startTest() {
-  document.getElementById('intro').classList.remove('show');
-  showNextQuestion();
-}
-
-// 유저 정보 저장 및 연차별 질문 삽입
-function saveUserInfo() {
-  const exp = document.getElementById('experience').value;
-  userInfo = { experience: exp };
-
-  const q2 = q2Map[exp];
-  if (q2) baseQuestions[2] = q2;
-
-  document.getElementById('userinfo').classList.remove('show');
-  document.getElementById('intro').classList.add('show');
-}
-
-// 다음 질문 표시
-function showNextQuestion() {
-  const qWrap = document.getElementById('questions');
-  qWrap.innerHTML = '';
-
-  if (currentQuestion >= baseQuestions.length) {
-    showResult();
-    return;
-  }
-
-  let q = baseQuestions[currentQuestion];
-  if (q.branch && branchQuestions[userInfo.experience]?.length) {
-    q = branchQuestions[userInfo.experience].shift();
-    if (!q) {
-      currentQuestion++;
-      showNextQuestion();
-      return;
+    function saveUserInfo() {
+      const exp = document.getElementById('experience').value;
+      userInfo = { experience: exp };
+      baseQuestions[1] = getQ2ByExperience(exp);
+      document.getElementById('userinfo').classList.remove('show');
+      document.getElementById('intro').classList.add('show');
     }
-  }
 
-  const qDiv = document.createElement('div');
-  qDiv.className = 'container show';
-  const qTitle = document.createElement('p');
-  qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${q.text}`;
-  qDiv.appendChild(qTitle);
-
-  q.options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.innerText = opt.text;
-    btn.onclick = () => {
-      answers.push(opt);
-      currentQuestion++;
-      qDiv.remove();
+    function startTest() {
+      document.getElementById('intro').classList.remove('show');
+      currentQuestion = 0;
+      answers = [];
+      totalScore = 0;
       showNextQuestion();
-    };
-    qDiv.appendChild(btn);
-  });
+    }
 
-  qWrap.appendChild(qDiv);
-}
+    function showNextQuestion() {
+      const qWrap = document.getElementById('questions');
+      qWrap.innerHTML = '';
 
-// 결과 계산
-function showResult() {
-  document.getElementById('questions').innerHTML = '';
-  document.getElementById('result').classList.add('show');
+      if (currentQuestion >= baseQuestions.length) {
+        showResult();
+        return;
+      }
 
-  let total = answers.reduce((sum, a) => sum + (a.score || 0), 0);
-  const result = resultTypes.find(r => r.condition(total));
+      const qData = baseQuestions[currentQuestion];
 
-  document.getElementById('resultImage').src = imageMap[result.name];
-  document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
-}
+      let finalQ = qData;
+      if (qData.branch) {
+        const branchSet = branchQuestions[userInfo.experience];
+        finalQ = branchSet.shift();
+      }
 
-// 결과 복사
-function copyResult() {
-  const text = document.getElementById('resultText').innerText;
-  const url = window.location.href.split('?')[0];
-  navigator.clipboard.writeText(`${text}\n\n테스트 해보기 👉 ${url}`).then(() => {
-    alert('결과와 링크가 복사되었어요! 붙여넣기로 공유해보세요 🎉');
-  });
-}
+            const qDiv = document.createElement('div');
+      qDiv.className = 'container show';
 
-// 카카오 공유
-function shareKakao() {
-  const resultText = document.getElementById('resultText').innerText;
-  const [title, desc] = resultText.split('\n');
-  const url = window.location.href.split('?')[0];
-  Kakao.Link.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: '나는 공무원을 계속할 상인가?',
-      description: `테스트 결과: ${title}\n${desc}`,
-      imageUrl: document.getElementById('resultImage').src,
-      link: { mobileWebUrl: url, webUrl: url }
-    },
-    buttons: [{ title: '테스트 해보기', link: { mobileWebUrl: url, webUrl: url } }]
-  });
-}
-</script>
+      const qTitle = document.createElement('p');
+      qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${finalQ.text}`;
+      qDiv.appendChild(qTitle);
+
+      finalQ.options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.innerText = option.text;
+        btn.onclick = () => {
+          answers.push(option.text);
+          totalScore += option.score;
+          currentQuestion++;
+          qDiv.remove();
+          showNextQuestion();
+        };
+        qDiv.appendChild(btn);
+      });
+
+      qWrap.appendChild(qDiv);
+    }
+
+    function showResult() {
+      document.getElementById('questions').innerHTML = '';
+      document.getElementById('result').classList.add('show');
+
+      // 점수에 따라 결과 결정
+      const result = resultTypes.find(r => r.condition(totalScore));
+
+      document.getElementById('resultImage').src = imageMap[result.name];
+      document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
+    }
+
+    function copyResult() {
+      const text = document.getElementById('resultText').innerText;
+      const url = window.location.href;
+      navigator.clipboard.writeText(`${text}\n\n테스트 해보기 👉 ${url}`).then(() => {
+        alert('결과와 링크가 복사되었어요! 붙여넣기로 공유해보세요 🎉');
+      });
+    }
+
+    function shareKakao() {
+      Kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '나는 공무원을 계속할 상인가?',
+          description: document.getElementById('resultText').innerText,
+          imageUrl: document.getElementById('resultImage').src,
+          link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href
+          }
+        },
+        buttons: [
+          {
+            title: '테스트 해보기',
+            link: {
+              mobileWebUrl: window.location.href,
+              webUrl: window.location.href
+            }
+          }
+        ]
+      });
+    }
+  </script>
 </body>
 </html>
