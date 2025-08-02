@@ -292,9 +292,28 @@
     }
 
     function shareKakao() {
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent("나는 공무원을 계속할 상인가? 테스트 결과를 확인해보세요!");
-      window.open(`https://sharer.kakao.com/talk/friends/picker/link?app_key=test&template_json=${text}%20${url}`);
-    }
+  Kakao.Link.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: '나는 공무원을 계속할 상인가?',
+      description: '테스트 결과를 확인해보세요!',
+      imageUrl: 'https://raw.githubusercontent.com/jjinooh/gongmoo-dna-assets/refs/heads/main/PENUP_20250802_070019%20(1).png',
+      link: {
+        mobileWebUrl: window.location.href,
+        webUrl: window.location.href
+      }
+    },
+    buttons: [
+      {
+        title: '테스트 해보기',
+        link: {
+          mobileWebUrl: window.location.href,
+          webUrl: window.location.href
+        }
+      }
+    ]
+  });
+}
+
   </script></body>
 </html>
