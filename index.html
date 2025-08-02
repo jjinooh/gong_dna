@@ -89,14 +89,54 @@
     <button onclick="location.reload()">🔁 다시 하기</button>
 <!-- 만든 사람 정보 -->
   <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
-  <strong>JINO</strong><br>
+  Made by<strong>JINO</strong><br>
   #출근고민만100번째 #내면분투형
 </div>
   </div>  <script>
     let userInfo = {};
     let answers = [];
     let currentQuestion = 0;
-
+    const q2Map = {
+  "1년 미만": {
+    text: "요즘 당신 입에서 자주 나오는 말은?",
+    options: [
+      "아직도 헷갈려요...",
+      "혹시 이것도 제가 할까요?",
+      "메뉴얼이랑 실제가 너무 달라요",
+      "오…이걸 저한테요?"
+    ]
+  },
+  "1~3년": {
+    text: "요즘 당신 입에서 자주 나오는 말은?",
+    options: [
+      "그건 제가 담당이 아닌데요…",
+      "결재 드렸습니다",
+      "이거 왜 또 바꼈어요?",
+      "매뉴얼 어디 있어요?"
+    ]
+  },
+  "4~7년": {
+    text: "요즘 당신 입에서 자주 나오는 말은?",
+    options: [
+      "그건 제가 담당이 아닌데요…",
+      "결재 드렸습니다",
+      "이거 왜 또 바꼈어요?",
+      "매뉴얼 어디 있어요?"
+    ]
+  },
+  "8년 이상": {
+    text: "요즘 당신 입에서 자주 나오는 말은?",
+    options: [
+      "그거 옛날에도 문제 있었어",
+      "내가 말했잖아 그때",
+      "또 바뀌었대요. 지침 내려온대",
+      "안 그래도 보고 있었어요"
+    ]
+  }
+};
+    function getQ2ByExperience(exp) {
+      return q2Map[exp];
+    }
     const resultTypes = [
       {
         name: '천직형 🌟',
@@ -176,6 +216,7 @@
     function saveUserInfo() {
       const exp = document.getElementById('experience').value;
       userInfo = { experience: exp };
+      baseQuestions[1] = getQ2ByExperience(exp);
       document.getElementById('userinfo').classList.remove('show');
       document.getElementById('intro').classList.add('show');
     }
