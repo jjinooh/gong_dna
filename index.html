@@ -131,8 +131,20 @@ const branchQuestions = {
         { text: '😬 다른 주제로 넘긴다', score: 3 },
         { text: '🤓 근거를 다시 설명한다', score: 1 }
       ]
-    }
-  ],
+    },
+    { text: '처음 월급을 받고 든 생각은?', options: [
+      { text: '💰 열심히 벌어야지!', score: 0 },
+      { text: '🤔 이걸로 생활이 될까?', score: 1 },
+      { text: '💸 뭔가 허무하다', score: 2 },
+      { text: '🛍️ 다 썼는데 남은 게 없다', score: 3 }
+    ]},
+    { text: '첫 근무평가 결과를 받았을 때?', options: [
+      { text: '📈 부족한 점을 바로 개선하려 함', score: 0 },
+      { text: '😐 의외로 무덤덤했다', score: 1 },
+      { text: '😓 기준이 뭔지 모르겠다', score: 2 },
+      { text: '💢 이건 부당하다', score: 3 }
+    ]}
+  ],     
   '1~3년': [
     {
       text: '성과평가 시즌이 다가오면?',
@@ -161,6 +173,18 @@ const branchQuestions = {
         { text: '😩 연차 못 쓰고 포기함', score: 3 }
       ]
     }
+    { text: '실수했을 때 대처 방식은?', options: [
+      { text: '🛠️ 바로 인정하고 수정', score: 0 },
+      { text: '😥 조용히 정리하고 넘김', score: 1 },
+      { text: '😨 들킬까봐 전전긍긍', score: 2 },
+      { text: '🙄 그냥 모른 척함', score: 3 }
+    ]},
+    { text: '상사와 갈등이 생기면?', options: [
+      { text: '🗣️ 대화를 시도한다', score: 0 },
+      { text: '😐 거리를 두고 본다', score: 1 },
+      { text: '😠 나도 짜증내고 튄다', score: 3 },
+      { text: '🤷‍♀️ 그냥 포기한다', score: 2 }
+    ]}
   ],
   '4~7년': [
     {
@@ -190,15 +214,25 @@ const branchQuestions = {
         { text: '💢 나 말고 누가 해', score: 3 }
       ]
     }
+    { text: '부서 간 협업이 필요할 때?', options: [
+      { text: '🤝 먼저 연락해서 조율', score: 0 },
+      { text: '📨 메일만 보낸다', score: 1 },
+      { text: '😮‍💨 귀찮아서 미룬다', score: 2 },
+      { text: '🙅 협업 말고 내 일이나 한다', score: 3 }
+    ]},
+    { text: '조직 개편이 있을 때 당신은?', options: [
+      { text: '🧭 새 기회라 생각한다', score: 0 },
+      { text: '🤔 일단 상황을 본다', score: 1 },
+      { text: '😞 또 이사 가야 해?', score: 2 },
+      { text: '😤 그냥 관두고 싶다', score: 3 }
+    ]}
   ],
   '8년 이상': [
-    {
-      text: '팀장이 되었을 때 가장 중요한 건?',
-      options: [
-        { text: '🧭 방향과 비전 제시', score: 0 },
-        { text: '📞 실무자 의견 수렴', score: 1 },
-        { text: '😶 나만 안 건드리면 OK', score: 2 },
-        { text: '🫥 그냥 책임지고 싶지 않다', score: 3 }
+    { text: '8년 차에 접어든 지금, 가장 큰 고민은?', options: [
+      { text: '🎯 앞으로의 커리어 방향', score: 0 },
+      { text: '😥 반복되는 업무와 피로감', score: 1 },
+      { text: '🤯 변화 없는 조직 문화', score: 2 },
+      { text: '🛫 전직이나 퇴사를 고려 중', score: 3 }
       ]
     },
     {
@@ -218,7 +252,19 @@ const branchQuestions = {
         { text: '😠 괜히 기분 나쁘다', score: 2 },
         { text: '🙅‍♂️ 상사에게 알린다', score: 3 }
       ]
-    }
+    },
+    { text: '본인의 가치관은 예전과 비교해?', options: [
+      { text: '🧘 더 여유로워졌다', score: 0 },
+      { text: '💬 많이 말조심하게 됐다', score: 1 },
+      { text: '🤯 이상과 현실의 괴리를 느낌', score: 2 },
+      { text: '😑 기대를 접었다', score: 3 }
+    ]},
+    { text: '조직에 오래 있었을 때 장점은?', options: [
+      { text: '📈 경험에서 나오는 통찰', score: 0 },
+      { text: '🧩 네트워크 활용 능력', score: 1 },
+      { text: '🙃 적당한 무던함', score: 2 },
+      { text: '🫤 적응은 했지만 애정은 없다', score: 3 }
+    ]}
   ]
 };
 
