@@ -223,49 +223,97 @@ const branchQuestions = {
 };
 
 const baseQuestions = [
-    { text: '출근길, 가장 먼저 드는 생각은?', options: [
-        { text: '☀️ 오늘은 뭐든 잘 될 거야!', score: 0 },
-        { text: '😐 무난하게 흘러가길', score: 1 },
-        { text: '😩 또 시작이네...', score: 2 },
-        { text: '🫠 안 가면 안 되나?', score: 3 }
-      ]},
-      { text: '회의 중 당신의 태도는?', options: [
-        { text: '📝 적극적으로 메모하며 참여', score: 0 },
-        { text: '👀 조용히 듣고 있음', score: 1 },
-        { text: '😮‍💨 눈은 뜨고 있지만 딴생각', score: 2 },
-        { text: '😴 아예 딴짓 중', score: 3 }
-      ]},
-      { text: '동료가 퇴사를 고민 중이라면?', options: [
-        { text: '🫶 진심으로 붙잡는다', score: 0 },
-        { text: '🤔 이유를 물어본다', score: 1 },
-        { text: '😶 그냥 듣고만 있다', score: 2 },
-        { text: '🥲 부럽다', score: 3 }
-      ]},
-      { text: '휴일 직전에 생긴 야근 상황!', options: [
-        { text: '🔥 해치우고 깔끔하게 쉰다', score: 0 },
-        { text: '😮‍💨 최대한 빨리 끝낸다', score: 1 },
-        { text: '🙄 다음 주로 미룰 방법을 찾는다', score: 2 },
-        { text: '🙅‍♂️ 절대 못한다 선언', score: 3 }
-      ]},
-      { text: '사무실 분위기가 무거울 때?', options: [
-        { text: '😄 일부러 활기를 불어넣는다', score: 0 },
-        { text: '🤫 조용히 분위기 따라간다', score: 1 },
-        { text: '😓 휴가 쓰고 싶어진다', score: 2 },
-        { text: '😶 아무 느낌 없다', score: 3 }
-      ]},
-      { text: '공직자라는 정체성에 대해?', options: [
-        { text: '🎖️ 자부심을 느낀다', score: 0 },
-        { text: '🙂 직업 중 하나라고 생각한다', score: 1 },
-        { text: '😐 가끔 회의감이 든다', score: 2 },
-        { text: '😞 후회하고 있다', score: 3 }
-      ]},
-      { text: '휴가 복귀 첫날 당신은?', options: [
-        { text: '🧹 메일 확인부터 시작', score: 0 },
-        { text: '☕ 커피 한잔하며 적응 중', score: 1 },
-        { text: '😮‍💨 몸은 왔지만 마음은 휴가 중', score: 2 },
-        { text: '😩 진심 퇴사하고 싶다', score: 3 }
-      ]}
-    ];
+  {
+    text: "출근길, 가장 먼저 드는 생각은?",
+    options: [
+      { text: "☀️ 오늘은 뭐든 잘 될 거야!", score: 0 },
+      { text: "😐 무난하게 흘러가길", score: 1 },
+      { text: "😩 또 시작이네...", score: 2 },
+      { text: "😤 안 가면 안 되나?", score: 3 }
+    ]
+  },
+  {
+    text: "회의 중 당신의 태도는?",
+    options: [
+      { text: "📝 적극적으로 메모하며 참여", score: 0 },
+      { text: "👀 조용히 듣고 있음", score: 1 },
+      { text: "😮‍💨 눈은 뜨고 있지만 딴생각", score: 2 },
+      { text: "😴 아예 딴짓 중", score: 3 }
+    ]
+  },
+  {
+    text: "동료가 퇴사를 고민 중이라면?",
+    options: [
+      { text: "🙅 진심으로 붙잡는다", score: 0 },
+      { text: "🤔 이유를 물어본다", score: 1 },
+      { text: "😶 그냥 듣고만 있다", score: 2 },
+      { text: "🙈 부럽다", score: 3 }
+    ]
+  },
+  {
+    text: "휴일 직전에 생긴 야근 상황!",
+    options: [
+      { text: "🔥 해치우고 깔끔하게 쉰다", score: 0 },
+      { text: "😮‍💨 최대한 빨리 끝낸다", score: 1 },
+      { text: "🙄 다음 주로 미룰 방법을 찾는다", score: 2 },
+      { text: "🙅‍ 절대 못한다 선언", score: 3 }
+    ]
+  },
+  {
+    text: "보고서를 쓸 때 나는?",
+    options: [
+      { text: "🧐 구조부터 치밀하게 짠다", score: 0 },
+      { text: "😓 빈 화면 앞에서 멍…", score: 3 },
+      { text: "🙋 사례부터 긁어온다", score: 1 },
+      { text: "😇 선배 문서 복붙 + 살짝 수정", score: 2 }
+    ]
+  },
+  {
+    text: "회식 소식이 들리면?",
+    options: [
+      { text: "🎉 오랜만에 사람들과 수다 떨 기회", score: 0 },
+      { text: "🤔 누구 오는지 먼저 확인", score: 1 },
+      { text: "😩 또 회식…", score: 2 },
+      { text: "🙈 몰랐던 척 조용히 집 간다", score: 3 }
+    ]
+  },
+  {
+    text: "휴가 복귀 첫날 당신은?",
+    options: [
+      { text: "🧹 메일 확인부터 시작", score: 0 },
+      { text: "☕ 커피 한잔하며 적응 중", score: 1 },
+      { text: "😩 진심 퇴사하고 싶다", score: 3 },
+      { text: "😮‍💨 몸은 왔지만 마음은 휴가 중", score: 2 }
+    ]
+  },
+  {
+    text: "나에게 공무원이라는 일은...",
+    options: [
+      { text: "💼 사회를 지탱하는 책임감 있는 일", score: 0 },
+      { text: "💸 안정적이라 선택한 생계형 직업", score: 1 },
+      { text: "😶‍🌫️ 의미는 점점 흐려지는 중", score: 2 },
+      { text: "🎭 일과 나를 분리한 이중생활", score: 3 }
+    ]
+  },
+  {
+    text: "요즘 내 퇴사 욕구는?",
+    options: [
+      { text: "💣 매우 높음 – 퇴사 각", score: 3 },
+      { text: "🔥 가끔 욱하지만 참음", score: 2 },
+      { text: "🧊 낮음 – 안정 최고", score: 1 },
+      { text: "😇 없음 – 나는 공무원이 천직", score: 0 }
+    ]
+  },
+  {
+    text: "퇴근 5분 전, 상사의 '잠깐 나 좀 봐' 한 마디에 당신은?",
+    options: [
+      { text: "네! 바로 가겠습니다!", score: 0 },
+      { text: "아....네. (시계 힐끗) 무슨 일이지?", score: 1 },
+      { text: "하...벌써 머리가 지끈거리네", score: 2 },
+      { text: "못 들은 척, 빠르게 퇴근 문 열고 나간다", score: 3 }
+    ]
+  }
+];
 let answers = [];
 let currentQuestion = 0;
 let totalScore = 0;
@@ -390,3 +438,4 @@ function shareKakao() {
 </script>
 </body>
 </html>
+
