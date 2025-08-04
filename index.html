@@ -611,8 +611,7 @@
 
       // 최종 totalScore를 기반으로 결과 유형 결정
       // 조건에 맞는 첫 번째 resultType을 찾습니다.
-      const result = resultTypes.find(r => totalScore <= r.condition);
-
+      const result = resultTypes.find(r => r.condition(totalScore));
       document.getElementById('resultImage').src = imageMap[result.name];
       document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
     }
