@@ -563,45 +563,42 @@
       document.getElementById('intro').classList.add('show');
     }
 
+    let branchQueue = []; // 전역에서 관리
+
     function startTest() {
       document.getElementById('intro').classList.remove('show');
       currentQuestion = 0;
       answers = [];
       totalScore = 0;
+
+  // 시작할 때 branch 질문 세트 복제
+      branchQueue = [...(branchQuestions[userInfo.experience] || [])];
+
       showNextQuestion();
     }
 
     function showNextQuestion() {
-      const qWrap = document.getElementById('questions');
-      qWrap.innerHTML = '';
+       const qWrap = document.getElementById('questions');
+       qWrap.innerHTML = '';
 
-      // baseQuestions의 모든 질문을 다 처리했으면 결과 화면 표시
-      if (qData.branch) {
-        const branchSet = branchQuestions[userInfo.experience];
-        if (branchSet && branchSet.length > 0) {
-           qData = branchSet.shift();
-        } else {
-    // 브랜치 질문이 없거나 모두 사용했을 경우 다음 질문으로 넘어갑니다
-          currentQuestion++;
-          showNextQuestion();
-          return;
-        }
-     }
- 
+  // 모든 질문이 끝났는지 먼저 확인
+      if (currentQuestion >= baseQuestions.length) {
+        showResult();
+        return;
+      }
+   
       let qData = baseQuestions[currentQuestion];
 
-      // branch: true 마커가 있는 경우, 해당 경력에 맞는 분기 질문을 가져옵니다.
+  // branch: true 마커 처리
       if (qData.branch) {
-  const branchSet = branchQuestions[userInfo.experience];
-  if (branchSet && branchSet.length > 0) {
-    qData = branchSet.shift();
-  } else {
-    currentQuestion++;
-    showNextQuestion(); // 다음 질문으로 넘김
-    return;
-  }
-}
-
+      if (branchQueue.length > 0) {
+        qData = branchQueue.shift();
+      } else {
+        currentQuestion++;
+        showNextQuestion();
+        return;
+      }
+    }
       const qDiv = document.createElement('div');
       qDiv.className = 'container show';
 
@@ -618,6 +615,10 @@
           currentQuestion++;
           qDiv.remove();
           showNextQuestion();
+          if (currentQuestion >= baseQuestions.length) {
+      showResult();
+      return;
+    }
         };
         qDiv.appendChild(btn);
       });
