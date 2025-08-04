@@ -614,30 +614,16 @@
       qWrap.appendChild(qDiv);
     }
 
-    function showResult() {
-  document.getElementById('questions').innerHTML = '';
-  document.getElementById('result').classList.add('show');
-  
-  console.log("최종 점수:", totalScore); // 디버깅용
-  
-  // 모든 결과 타입을 순회하며 조건 확인
-  let result = null;
-  for (let i = 0; i < resultTypes.length; i++) {
-    if (resultTypes[i].condition(totalScore)) {
-      result = resultTypes[i];
-      break;
+     function showResult() {
+      document.getElementById('questions').innerHTML = '';
+      document.getElementById('result').classList.add('show');
+
+      // 최종 totalScore를 기반으로 결과 유형 결정
+      // 조건에 맞는 첫 번째 resultType을 찾습니다.
+      const result = resultTypes.find(r => r.condition(totalScore));
+      document.getElementById('resultImage').src = imageMap[result.name];
+      document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
     }
-  }
-  
-  // 결과가 없을 경우 기본값 설정
-  if (!result) {
-    console.error("결과를 찾을 수 없습니다. 기본값 사용");
-    result = resultTypes[0]; // 첫 번째 결과 타입을 기본값으로 사용
-  }
-  
-  document.getElementById('resultImage').src = imageMap[result.name];
-  document.getElementById('resultText').innerText = `${result.name}\n${result.desc}`;
-}
 
     function copyResult() {
       const text = document.getElementById('resultText').innerText;
