@@ -1,285 +1,229 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>공무원 DNA 테스트</title>
-  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
-  <script>
-    Kakao.init('3138aed7cfa6cb0fbdca2b0e71a77461');
-  </script>
-  <style>
-    /* CSS 코드 (이 부분은 여기에 그대로 두면 됩니다) */
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f7f9fc;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-    .container {
-      width: 90vw;
-      max-width: 420px;
-      height: 90vh;
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-      text-align: center;
-      display: none; /* 초기에는 숨김 */
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    .container.show {
-      display: flex; /* 'show' 클래스가 있으면 표시 */
-    }
-    h1, h2, p {
-      margin-bottom: 12px;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 6px;
-      font-size: 15px;
-      border: none;
-      border-radius: 10px;
-      background: #5a8dee;
-      color: white;
-      cursor: pointer;
-      width: 80%;
-    }
-    select {
-      padding: 8px;
-      width: 80%;
-      font-size: 14px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    .comment {
-      font-size: 12px;
-      color: #888;
-      margin-top: 8px;
-    }
-    #result img {
-      width: 120px;
-      margin-bottom: 10px;
-      border-radius: 8px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공무원 DNA 테스트</title>
+  <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+  <script>
+    Kakao.init('3138aed7cfa6cb0fbdca2b0e71a77461');
+  </script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      width: 90vw;
+      max-width: 420px;
+      height: 90vh;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      text-align: center;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .container.show {
+      display: flex;
+    }
+    h1, h2, p {
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 6px;
+      font-size: 15px;
+      border: none;
+      border-radius: 10px;
+      background: #5a8dee;
+      color: white;
+      cursor: pointer;
+      width: 80%;
+    }
+    select {
+      padding: 8px;
+      width: 80%;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .comment {
+      font-size: 12px;
+      color: #888;
+      margin-top: 8px;
+    }
+    #result img {
+      width: 120px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container show" id="userinfo">
-    <h2>공직 경력 체크</h2>
-    <p>당신의 공직 연차를 알려주세요!</p>
-    <select id="experience">
-      <option value="1년 미만">🍼 1년 미만</option>
-      <option value="1~3년">🌱 1~3년</option>
-      <option value="4~7년">🌳 4~7년</option>
-      <option value="8년 이상">🧘 8년 이상</option>
-    </select>
-    <button onclick="saveUserInfo()">테스트 시작하기</button>
-  </div>
-  <div class="container" id="intro">
-    <h1>공무원 DNA 테스트 🧬</h1>
-    <p>나는 공무원을 계속할 상인가?</p>
-    <button onclick="startTest()">시작!</button>
-    <div class="comment">* 본 테스트는 재미용입니다 :)</div>
-  </div>
-  <div id="questions"></div>
-  <div class="container" id="result">
-    <h2>🎯 당신의 결과는?</h2>
-    <img id="resultImage" src="" alt="결과 이미지">
-    <p id="resultText"></p>
-    <button onclick="copyResult()">🔗 결과 복사</button>
-    <button onclick="shareKakao()">💬 카카오톡 공유</button>
-    <button onclick="location.reload()">🔁 다시 하기</button>
-    <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
-      Made by <strong>JINO</strong><br>
-      #출근고민만100번째 #내면분투형
-    </div>
-  </div>
-  
-  <script>
-    let userInfo = {};
+  <div class="container show" id="userinfo">
+    <h2>공직 경력 체크</h2>
+    <p>당신의 공직 연차를 알려주세요!</p>
+    <select id="experience">
+      <option value="1년 미만">🍼 1년 미만</option>
+      <option value="1~3년">🌱 1~3년</option>
+      <option value="4~7년">🌳 4~7년</option>
+      <option value="8년 이상">🧘 8년 이상</option>
+    </select>
+    <button onclick="saveUserInfo()">테스트 시작하기</button>
+  </div>
+  <div class="container" id="intro">
+    <h1>공무원 DNA 테스트 🧬</h1>
+    <p>나는 공무원을 계속할 상인가?</p>
+    <button onclick="startTest()">시작!</button>
+    <div class="comment">* 본 테스트는 재미용입니다 :)</div>
+  </div>
+  <div id="questions"></div>
+  <div class="container" id="result">
+    <h2>🎯 당신의 결과는?</h2>
+    <img id="resultImage" src="" alt="결과 이미지">
+    <p id="resultText"></p>
+    <button onclick="copyResult()">🔗 결과 복사</button>
+    <button onclick="shareKakao()">💬 카카오톡 공유</button>
+    <button onclick="location.reload()">🔁 다시 하기</button>
+    <div class="comment" style="margin-top: 20px; font-size: 13px; color: #999;">
+      Made by <strong>JINO</strong><br>
+      #출근고민만100번째 #내면분투형
+    </div>
+  </div>
+  <script>
+let userInfo = {};
 
-    const branchQuestions = {
-      '1년 미만': [
-        {
-          text: '처음 맡은 업무가 너무 어렵다면?',
-          options: [
-            { text: '💪 무조건 해본다', score: 0 },
-            { text: '🙋‍♀️ 선배한테 바로 묻는다', score: 1 },
-            { text: '😶 눈치보다 늦게 시작', score: 2 },
-            { text: '😭 모른 척 넘기고 싶다', score: 3 }
-          ]
-        },
-        {
-          text: '상사가 갑자기 퇴근 전 업무를 준다면?',
-          options: [
-            { text: '😇 네! 바로 하겠습니다', score: 0 },
-            { text: '😓 속으로는 울지만 한다', score: 1 },
-            { text: '🤐 말없이 집에 간다', score: 3 },
-            { text: '🤔 몰랐던 척 자리 피한다', score: 2 }
-          ]
-        },
-        {
-          text: '회의 도중 의견이 틀릴 때?',
-          options: [
-            { text: '😅 민망하지만 인정', score: 0 },
-            { text: '😐 조용히 입 다문다', score: 2 },
-            { text: '😬 다른 주제로 넘긴다', score: 3 },
-            { text: '🤓 근거를 다시 설명한다', score: 1 }
-          ]
-        },
-        { text: '처음 월급을 받고 든 생각은?', options: [
-          { text: '💰 열심히 벌어야지!', score: 0 },
-          { text: '🤔 이걸로 생활이 될까?', score: 1 },
-          { text: '💸 뭔가 허무하다', score: 2 },
-          { text: '🛍️ 다 썼는데 남은 게 없다', score: 3 }
-        ]},
-        { text: '첫 근무평가 결과를 받았을 때?', options: [
-          { text: '📈 부족한 점을 바로 개선하려 함', score: 0 },
-          { text: '😐 의외로 무덤덤했다', score: 1 },
-          { text: '😓 기준이 뭔지 모르겠다', score: 2 },
-          { text: '💢 이건 부당하다', score: 3 }
-        ]}
-      ],
-      '1~3년': [
-        {
-          text: '성과평가 시즌이 다가오면?',
-          options: [
-            { text: '📈 지난 성과 정리하며 준비', score: 0 },
-            { text: '😵 또 뭐 쓴다는 거야?', score: 2 },
-            { text: '😒 어차피 고만고만하지', score: 3 },
-            { text: '🧾 상사에게 방향을 묻는다', score: 1 }
-          ]
-        },
-        {
-          text: '당신의 동기와 업무관계는?',
-          options: [
-            { text: '👯 서로 도우며 윈윈', score: 0 },
-            { text: '🤔 가끔 눈치 싸움', score: 1 },
-            { text: '😤 비교 대상이 되어 스트레스', score: 2 },
-            { text: '🙅 서로 거리 두는 중', score: 3 }
-          ]
-        },
-        {
-          text: '연차 사용할 때 당신은?',
-          options: [
-            { text: '📅 미리 계획해서 신청', score: 0 },
-            { text: '🙃 일단 질러놓고 본다', score: 2 },
-            { text: '😵 눈치 보며 조심스럽게', score: 1 },
-            { text: '😩 연차 못 쓰고 포기함', score: 3 }
-          ]
-        },
-        { text: '실수했을 때 대처 방식은?', options: [
-          { text: '🛠️ 바로 인정하고 수정', score: 0 },
-          { text: '😥 조용히 정리하고 넘김', score: 1 },
-          { text: '😨 들킬까봐 전전긍긍', score: 2 },
-          { text: '🙄 그냥 모른 척함', score: 3 }
-        ]},
-        { text: '상사와 갈등이 생기면?', options: [
-          { text: '🗣️ 대화를 시도한다', score: 0 },
-          { text: '😐 거리를 두고 본다', score: 1 },
-          { text: '😠 나도 짜증내고 튄다', score: 3 },
-          { text: '🤷‍♀️ 그냥 포기한다', score: 2 }
-        ]}
-      ],
-      '4~7년': [
-        {
-          text: '새로운 정책사업이 떨어지면?',
-          options: [
-            { text: '🔥 기획의 본능이 살아난다', score: 0 },
-            { text: '📋 전년도 사례부터 찾는다', score: 1 },
-            { text: '😓 누가 시킨 거야 이거', score: 2 },
-            { text: '🤯 다른 부서랑 바꾸고 싶다', score: 3 }
-          ]
-        },
-        {
-          text: '민원전화 10통째 받았을 때?',
-          options: [
-            { text: '📞 친절하게 계속 응대', score: 0 },
-            { text: '🙄 눈치껏 끊고 메모 남김', score: 1 },
-            { text: '😩 전화기 멀리하고 숨음', score: 2 },
-            { text: '😤 민원보다 내가 터질 듯', score: 3 }
-          ]
-        },
-        {
-          text: '예산 삭감 소식을 들었을 때?',
-          options: [
-            { text: '📊 바로 대안 마련 시작', score: 0 },
-            { text: '🧾 다른 부서부터 탐색', score: 1 },
-            { text: '🤔 작년 거 그대로 쓴다', score: 2 },
-            { text: '💢 나 말고 누가 해', score: 3 }
-          ]
-        },
-        { text: '부서 간 협업이 필요할 때?', options: [
-          { text: '🤝 먼저 연락해서 조율', score: 0 },
-          { text: '📨 메일만 보낸다', score: 1 },
-          { text: '😮‍💨 귀찮아서 미룬다', score: 2 },
-          { text: '🙅 협업 말고 내 일이나 한다', score: 3 }
-        ]},
-        { text: '조직 개편이 있을 때 당신은?', options: [
-          { text: '🧭 새 기회라 생각한다', score: 0 },
-          { text: '🤔 일단 상황을 본다', score: 1 },
-          { text: '😞 또 이사 가야 해?', score: 2 },
-          { text: '😤 그냥 관두고 싶다', score: 3 }
-        ]}
-      ],
-      '8년 이상': [
-        {
-          text: '8년 차에 접어든 지금, 가장 큰 고민은?',
-          options: [
-            { text: '🎯 앞으로의 커리어 방향', score: 0 },
-            { text: '😥 반복되는 업무와 피로감', score: 1 },
-            { text: '🤯 변화 없는 조직 문화', score: 2 },
-            { text: '🛫 전직이나 퇴사를 고려 중', score: 3 }
-          ]
-        },
-        { text: '새로운 업무 시스템 도입에 대한 당신의 생각은?', options: [
-          { text: '✨ 배우고 활용하여 효율 높임', score: 0 },
-          { text: '📞 실무자 의견 수렴', score: 1 },
-          { text: '😶 나만 안 건드리면 OK', score: 2 },
-          { text: '🫥 그냥 책임지고 싶지 않다', score: 3 }
-        ]},
-        {
-          text: '행정감사 시즌이 오면?',
-          options: [
-            { text: '📁 자료부터 정리 시작', score: 0 },
-            { text: '📞 작년에 쓴 거 꺼내기', score: 1 },
-            { text: '😒 또 시작이군', score: 2 },
-            { text: '🙈 올해는 나 아니길', score: 3 }
-          ]
-        },
-        {
-          text: '업무 중 후배의 실수를 보았을 때?',
-          options: [
-            { text: '🫱 바로 알려주고 정정', score: 0 },
-            { text: '🙄 그냥 내가 처리함', score: 1 },
-            { text: '😠 괜히 기분 나쁘다', score: 2 },
-            { text: '🙅‍♂️ 상사에게 알린다', score: 3 }
-          ]
-        },
-        { text: '본인의 가치관은 예전과 비교해?', options: [
-          { text: '🧘 더 여유로워졌다', score: 0 },
-          { text: '💬 많이 말조심하게 됐다', score: 1 },
-          { text: '🤯 이상과 현실의 괴리를 느낌', score: 2 },
-          { text: '😑 기대를 접었다', score: 3 }
-        ]},
-        { text: '조직에 오래 있었을 때 장점은?', options: [
-          { text: '📈 경험에서 나오는 통찰', score: 0 },
-          { text: '🧩 네트워크 활용 능력', score: 1 },
-          { text: '🙃 적당한 무던함', score: 2 },
-          { text: '🫤 적응은 했지만 애정은 없다', score: 3 }
-        ]}
-      ]
-    };
+const branchQuestions = {
+  '1년 미만': [
+    {
+      text: '처음 맡은 업무가 너무 어렵다면?',
+      options: [
+        { text: '💪 무조건 해본다', score: 0 },
+        { text: '🙋‍♀️ 선배한테 바로 묻는다', score: 1 },
+        { text: '😶 눈치보다 늦게 시작', score: 2 },
+        { text: '😭 모른 척 넘기고 싶다', score: 3 }
+      ]
+    },
+    {
+      text: '상사가 갑자기 퇴근 전 업무를 준다면?',
+      options: [
+        { text: '😇 네! 바로 하겠습니다', score: 0 },
+        { text: '😓 속으로는 울지만 한다', score: 1 },
+        { text: '🤐 말없이 집에 간다', score: 3 },
+        { text: '🤔 몰랐던 척 자리 피한다', score: 2 }
+      ]
+    },
+    {
+      text: '회의 도중 의견이 틀릴 때?',
+      options: [
+        { text: '😅 민망하지만 인정', score: 0 },
+        { text: '😐 조용히 입 다문다', score: 2 },
+        { text: '😬 다른 주제로 넘긴다', score: 3 },
+        { text: '🤓 근거를 다시 설명한다', score: 1 }
+      ]
+    }
+  ],
+  '1~3년': [
+    {
+      text: '성과평가 시즌이 다가오면?',
+      options: [
+        { text: '📈 지난 성과 정리하며 준비', score: 0 },
+        { text: '😵 또 뭐 쓴다는 거야?', score: 2 },
+        { text: '😒 어차피 고만고만하지', score: 3 },
+        { text: '🧾 상사에게 방향을 묻는다', score: 1 }
+      ]
+    },
+    {
+      text: '당신의 동기와 업무관계는?',
+      options: [
+        { text: '👯 서로 도우며 윈윈', score: 0 },
+        { text: '🤔 가끔 눈치 싸움', score: 1 },
+        { text: '😤 비교 대상이 되어 스트레스', score: 2 },
+        { text: '🙅 서로 거리 두는 중', score: 3 }
+      ]
+    },
+    {
+      text: '연차 사용할 때 당신은?',
+      options: [
+        { text: '📅 미리 계획해서 신청', score: 0 },
+        { text: '🙃 일단 질러놓고 본다', score: 2 },
+        { text: '😵 눈치 보며 조심스럽게', score: 1 },
+        { text: '😩 연차 못 쓰고 포기함', score: 3 }
+      ]
+    }
+  ],
+  '4~7년': [
+    {
+      text: '새로운 정책사업이 떨어지면?',
+      options: [
+        { text: '🔥 기획의 본능이 살아난다', score: 0 },
+        { text: '📋 전년도 사례부터 찾는다', score: 1 },
+        { text: '😓 누가 시킨 거야 이거', score: 2 },
+        { text: '🤯 다른 부서랑 바꾸고 싶다', score: 3 }
+      ]
+    },
+    {
+      text: '민원전화 10통째 받았을 때?',
+      options: [
+        { text: '📞 친절하게 계속 응대', score: 0 },
+        { text: '🙄 눈치껏 끊고 메모 남김', score: 1 },
+        { text: '😩 전화기 멀리하고 숨음', score: 2 },
+        { text: '😤 민원보다 내가 터질 듯', score: 3 }
+      ]
+    },
+    {
+      text: '예산 삭감 소식을 들었을 때?',
+      options: [
+        { text: '📊 바로 대안 마련 시작', score: 0 },
+        { text: '🧾 다른 부서부터 탐색', score: 1 },
+        { text: '🤔 작년 거 그대로 쓴다', score: 2 },
+        { text: '💢 나 말고 누가 해', score: 3 }
+      ]
+    }
+  ],
+  '8년 이상': [
+    {
+      text: '8년 차에 접어든 지금, 가장 큰 고민은?',
+      options: [
+        { text: '🎯 앞으로의 커리어 방향', score: 0 },
+        { text: '😥 반복되는 업무와 피로감', score: 1 },
+        { text: '🤯 변화 없는 조직 문화', score: 2 },
+        { text: '🛫 전직이나 퇴사를 고려 중', score: 3 }
+      ]
+    },
+    {
+      text: '행정감사 시즌이 오면?',
+      options: [
+        { text: '📁 자료부터 정리 시작', score: 0 },
+        { text: '📞 작년에 쓴 거 꺼내기', score: 1 },
+        { text: '😒 또 시작이군', score: 2 },
+        { text: '🙈 올해는 나 아니길', score: 3 }
+      ]
+    },
+    {
+      text: '업무 중 후배의 실수를 보았을 때?',
+      options: [
+        { text: '🫱 바로 알려주고 정정', score: 0 },
+        { text: '🙄 그냥 내가 처리함', score: 1 },
+        { text: '😠 괜히 기분 나쁘다', score: 2 },
+        { text: '🙅‍♂️ 상사에게 알린다', score: 3 }
+      ]
+    }
+  ]
+};
 
-    const baseQuestions = [
-      { text: '출근길, 가장 먼저 드는 생각은?', options: [
+const baseQuestions = [
+    { text: '출근길, 가장 먼저 드는 생각은?', options: [
         { text: '☀️ 오늘은 뭐든 잘 될 거야!', score: 0 },
         { text: '😐 무난하게 흘러가길', score: 1 },
         { text: '😩 또 시작이네...', score: 2 },
@@ -322,121 +266,127 @@
         { text: '😩 진심 퇴사하고 싶다', score: 3 }
       ]}
     ];
-    let answers = [];
-    let currentQuestion = 0;
-    let totalScore = 0;
-    let branchQueue = [];
+let answers = [];
+let currentQuestion = 0;
+let totalScore = 0;
+let branchQueue = [];
 
-    const resultTypes = [
-      { name: '천직형 🌟', desc: '안정과 루틴을 사랑하는 천직형! 당신은 공직 DNA 그 자체입니다.', condition: a => a <= 7 }, 
-      { name: '내면 분투형 🌀', desc: '겉으로는 멀쩡, 속은 복잡한 고민의 연속. 늘 출근길에 생각이 많다.', condition: a => a <= 14 },
-      { name: '갈팡질팡형 🤹‍♀️', desc: '이직과 안정 사이에서 고민 중. 매일 출근 전 한숨을 쉰다면 당신!', condition: a => a <= 21 }, 
-      { name: '번아웃형 🔥', desc: '이미 마음은 퇴사 중... 현실은 계속 근무 중... 휴식이 필요해요!', condition: a => a <= 28 }, 
-      { name: '퇴사각형 💣', desc: '지금 안 그만두면 병날 것 같다면? 이 테스트 끝나고 바로 명상 ㄱ', condition: a => a <= 36 }
-    ];
+const resultTypes = [
+  { name: '천직형 🌟', desc: '안정과 루틴을 사랑하는 천직형! 당신은 공직 DNA 그 자체입니다.', condition: a => a <= 5 },
+  { name: '내면 분투형 🌀', desc: '겉으로는 멀쩡, 속은 복잡한 고민의 연속. 늘 출근길에 생각이 많다.', condition: a => a <= 10 },
+  { name: '갈팡질팡형 🤹‍♀️', desc: '이직과 안정 사이에서 고민 중. 매일 출근 전 한숨을 쉰다면 당신!', condition: a => a <= 15 },
+  { name: '번아웃형 🔥', desc: '이미 마음은 퇴사 중... 현실은 계속 근무 중... 휴식이 필요해요!', condition: a => a <= 20 },
+  { name: '퇴사각형 💣', desc: '지금 안 그만두면 병날 것 같다면? 이 테스트 끝나고 바로 명상 ㄱ', condition: a => a <= 25 }
+];
 
-    const imageMap = {
-      '갈팡질팡형 🤹‍♀️': 'https://private-user-images.githubusercontent.com/223630025/473902438-3d6d8106-3df6-420c-94c7-9f1a4e297c2e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDM4LTNkNmQ4MTA2LTNkZjYtNDIwYy05NGM3LTlmMWE0ZTI5N2MyZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1iYTc4NGQzMmZkNjU0YzA4NmU2ZTczZWQ2NWIzYjhkMzE0ZTdlMWRlYTc2MTMyOGVkY2FhY2ZlMzVmMjRiYjE2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9._qjFAOh9VBA9Whi4Yzd9plBoJmuOf5D9bLJkZpLGwm8',
-      '퇴사각형 💣': 'https://private-user-images.githubusercontent.com/223630025/473902440-dc590a55-10b6-4ba7-87b5-93c41ebd9cbd.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQwLWRjNTkwYTU1LTEwYjYtNGJhNy04N2I1LTkzYzQxZWJkOWNiZC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yYmMwOTcwNDc2NDIwOTkyNWQwYTY5MTU3ODcxMWNiMmNkNjlmN2YwYzhlNjc5NDc2ZDRhYTFhMTRlMzhiMGVmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.kclbOhI2zrKVGIwIlm-6l9M762_CrrQjiGGeQUQeUZM',
-      '천직형 🌟': 'https://private-user-images.githubusercontent.com/223630025/473902439-5aad9028-d48f-47a3-a51e-2ebe8362597e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDM5LTVhYWQ5MDI4LWQ0OGYtNDdhMy1hNTFlLTJlYmU4MzYyNTk3ZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mNTJjZTU5YWVhOGQyODg1NGJkNWZkYzhkMDI4ZjMyOWE5Yjg4MWJlNDEzYWY1YTM0NTE0MWM0YTkxMjFjYjk0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.nswiUHl3b4qSCEwZJs02fK36hPFHJpDVuu222D-X6W8',
-      '번아웃형 🔥': 'https://private-user-images.githubusercontent.com/223630025/473902441-0c349505-c76a-4b2a-b419-6fe303c1b8cf.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQxLTBjMzQ5NTA1LWM3NmEtNGIyYS1iNDE5LTZmZTMwM2MxYjhjZi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mZWJmZGY0YzU2ZjEyZjE4YjY2ZDRhOTJiNzEyOTYzMTg0N2RkMDQ5Y2Q4YjRkNjIxOWY0NzNhNzMzZGMzYTY1JlgtQW16LVNpZ25lZEhlYWRlcnM9aGZpb2d0ZWQtY3R4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.3IL1QlctnPngLcMCEpUtrJimPNxcP7wUkPhLwOBa9OM',
-      '내면 분투형 🌀': 'https://private-user-images.githubusercontent.com/223630025/473902442-a13755ed-5833-4395-aca9-30e81a154688.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQyLWExMzc1NWVkLTU4MzMtNDM5NS1hY2E5LTMwZTgxYTE1NDY4OC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02NzFkZTMxZmY5Y2E4Yjg4MjVkN2U5MjhkZWJkMzAxMGI4NDQ5OTZhN2ZiZjgyODFmOWE5NThiYjMwNDFiOTA2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.3IL1QlctnPngLcMCEpUtrJimPNxcP7wUkPhLwOBa9OM'
-    };
+const imageMap = {
+  '갈팡질팡형 🤹‍♀️': 'https://private-user-images.githubusercontent.com/223630025/473902438-3d6d8106-3df6-420c-94c7-9f1a4e297c2e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDM4LTNkNmQ4MTA2LTNkZjYtNDIwYy05NGM3LTlmMWE0ZTI5N2MyZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1iYTc4NGQzMmZkNjU0YzA4NmU2ZTczZWQ2NWIzYjhkMzE0ZTdlMWRlYTc2MTMyOGVkY2FhY2ZlMzVmMjRiYjE2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9._qjFAOh9VBA9Whi4Yzd9plBoJmuOf5D9bLJkZpLGwm8',
+  '퇴사각형 💣': 'https://private-user-images.githubusercontent.com/223630025/473902440-dc590a55-10b6-4ba7-87b5-93c41ebd9cbd.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQwLWRjNTkwYTU1LTEwYjYtNGJhNy04N2I1LTkzYzQxZWJkOWNiZC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yYmMwOTcwNDc2NDIwOTkyNWQwYTY5MTU3ODcxMWNiMmNkNjlmN2YwYzhlNjc5NDc2ZDRhYTFhMTRlMzhiMGVmJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.kclbOhI2zrKVGIwIlm-6l9M762_CrrQjiEGeQUQeUZM',
+  '천직형 🌟': 'https://private-user-images.githubusercontent.com/223630025/473902439-5aad9028-d48f-47a3-a51e-2ebe8362597e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDM5LTVhYWQ5MDI4LWQ0OGYtNDdhMy1hNTFlLTJlYmU4MzYyNTk3ZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mNTJjZTU5YWVhOGQyODg1NGJkNWZkYzhkMDI4ZjMyOWE5Yjg4MWJlNDEzYWY1YTM0NTE0MWM0YTkxMjFjYjk0JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.nswiUHl3b4qSCEwZJs02fK36hPFHJpDVuu222D-X6W8',
+  '번아웃형 🔥': 'https://private-user-images.githubusercontent.com/223630025/473902441-0c349505-c76a-4b2a-b419-6fe303c1b8cf.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQxLTBjMzQ5NTA1LWM3NmEtNGIyYS1iNDE5LTZmZTMwM2MxYjhjZi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1mZWJmZGY0YzU2ZjEyZjE4YjY2ZDRhOTJiNzEyOTYzMTg0N2RkMDQ5Y2Q4YjRkNjIxOWY0NzNhNzMzZGMzYTY1JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.10jFsqKay2E3jd-SWgyh6CQOjjWKSJlZqB2RgnYYbtY',
+  '내면 분투형 🌀': 'https://private-user-images.githubusercontent.com/223630025/473902442-a13755ed-5833-4395-aca9-30e81a154688.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTQyOTAwMzEsIm5iZiI6MTc1NDI4OTczMSwicGF0aCI6Ii8yMjM2MzAwMjUvNDczOTAyNDQyLWExMzc1NWVkLTU4MzMtNDM5NS1hY2E5LTMwZTgxYTE1NDY4OC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODA0JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgwNFQwNjQyMTFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT02NzFkZTMxZmY5Y2E4Yjg4MjVkN2U5MjhkZWJkMzAxMGI4NDQ5OTZhN2ZiZjgyODFmOWE5NThiYjMwNDFiOTA2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.3IL1QlctnPngLcMCEpUtrJimPNxcP7wUkPhLwOBa9OM'
+};
 
-    function saveUserInfo() {
-      const exp = document.getElementById('experience').value;
-      userInfo = { experience: exp };
-      branchQueue = [...(branchQuestions?.[exp] || [])];
-      document.getElementById('userinfo').classList.remove('show');
-      document.getElementById('intro').classList.add('show');
-    }
+function saveUserInfo() {
+  const exp = document.getElementById('experience').value;
+  userInfo = { experience: exp };
+  branchQueue = [...(branchQuestions?.[exp] || [])];
+  document.getElementById('userinfo').classList.remove('show');
+  document.getElementById('intro').classList.add('show');
+}
 
-    function startTest() {
-      document.getElementById('intro').classList.remove('show');
-      currentQuestion = 0;
-      answers = [];
-      totalScore = 0;
-      showNextQuestion();
-    }
+function startTest() {
+  document.getElementById('intro').classList.remove('show');
+  currentQuestion = 0;
+  answers = [];
+  totalScore = 0;
+  showNextQuestion();
+}
 
-    function showNextQuestion() {
-      const qWrap = document.getElementById('questions');
-      qWrap.innerHTML = '';
+function showNextQuestion() {
+  const qWrap = document.getElementById('questions');
+  qWrap.innerHTML = '';
 
-      let qData;
-      if (branchQueue.length > 0) {
-        qData = branchQueue.shift();
-      } else if (currentQuestion < baseQuestions.length) {
-        qData = baseQuestions[currentQuestion];
-        currentQuestion++;
-      } else {
-        showResult();
-        return;
-      }
-      
-      const qDiv = document.createElement('div');
-      qDiv.className = 'container show'; // 'show' 클래스 추가
-      const qTitle = document.createElement('p');
-      qTitle.innerHTML = `<strong>Q${answers.length + 1}.</strong> ${qData.text}`;
-      qDiv.appendChild(qTitle);
+  if (currentQuestion >= baseQuestions.length) {
+    showResult();
+    return;
+  }
 
-      qData.options.forEach(option => {
-        const btn = document.createElement('button');
-        btn.innerText = option.text;
-        btn.onclick = () => {
-          answers.push(option.text);
-          totalScore += option.score;
-          qDiv.remove();
-          showNextQuestion();
-        };
-        qDiv.appendChild(btn);
-      });
+  let qData = baseQuestions[currentQuestion];
+  if (qData.branch) {
+    if (branchQueue.length > 0) {
+      qData = branchQueue.shift();
+    } else {
+      currentQuestion++;
+      showNextQuestion();
+      return;
+    }
+  }
 
-      qWrap.appendChild(qDiv);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+  const qDiv = document.createElement('div');
+  qDiv.className = 'container show';
+  const qTitle = document.createElement('p');
+  qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${qData.text}`;
+  qDiv.appendChild(qTitle);
 
-    function showResult() {
-      document.getElementById('questions').innerHTML = '';
-      document.getElementById('result').classList.add('show');
-      const result = resultTypes.find(r => r.condition(totalScore));
-      document.getElementById('resultImage').src = imageMap[result.name];
-      document.getElementById('resultText').innerHTML = `<strong>${result.name}</strong><br>${result.desc}`;
-    }
+  qData.options.forEach(option => {
+    const btn = document.createElement('button');
+    btn.innerText = option.text;
+    btn.onclick = () => {
+      answers.push(option.text);
+      totalScore += option.score;
+      currentQuestion++;
+      qDiv.remove();
+      showNextQuestion();
+    };
+    qDiv.appendChild(btn);
+  });
 
-    function copyResult() {
-      const text = document.getElementById('resultText').innerText;
-      const url = window.location.href;
-      navigator.clipboard.writeText(`${text}
+  qWrap.appendChild(qDiv);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showResult() {
+  document.getElementById('questions').innerHTML = '';
+  document.getElementById('result').classList.add('show');
+  const result = resultTypes.find(r => r.condition(totalScore));
+  document.getElementById('resultImage').src = imageMap[result.name];
+  document.getElementById('resultText').innerHTML = `<strong>${result.name}</strong><br>${result.desc}`;
+}
+
+function copyResult() {
+  const text = document.getElementById('resultText').innerText;
+  const url = window.location.href;
+  navigator.clipboard.writeText(`${text}
 
 나도 공무원 DNA 테스트 해보기 👉 ${url}`).then(() => {
-        alert('결과와 테스트 링크가 복사되었어요! 붙여넣기로 친구들에게 공유해보세요 🎉');
-      });
-    }
+    alert('결과와 테스트 링크가 복사되었어요! 붙여넣기로 친구들에게 공유해보세요 🎉');
+  });
+}
 
-    function shareKakao() {
-      Kakao.Link.sendDefault({
-        objectType: 'feed',
-        content: {
-          title: '나는 공무원을 계속할 상인가? 🧬',
-          description: document.getElementById('resultText').innerText,
-          imageUrl: document.getElementById('resultImage').src,
-          link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href
-          }
-        },
-        buttons: [
-          {
-            title: '테스트 해보기',
-            link: {
-              mobileWebUrl: window.location.href,
-              webUrl: window.location.href
-            }
-          }
-        ]
-      });
-    }
-  </script>
+function shareKakao() {
+  Kakao.Link.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: '나는 공무원을 계속할 상인가? 🧬',
+      description: document.getElementById('resultText').innerText,
+      imageUrl: document.getElementById('resultImage').src,
+      link: {
+        mobileWebUrl: window.location.href,
+        webUrl: window.location.href
+      }
+    },
+    buttons: [
+      {
+        title: '테스트 해보기',
+        link: {
+          mobileWebUrl: window.location.href,
+          webUrl: window.location.href
+        }
+      }
+    ]
+  });
+}
+</script>
 </body>
 </html>
