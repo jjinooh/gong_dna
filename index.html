@@ -564,12 +564,18 @@
     }
 
     function startTest() {
-      document.getElementById('intro').classList.remove('show');
-      currentQuestion = 0;
-      answers = [];
-      totalScore = 0;
-      showNextQuestion();
-    }
+  document.getElementById('intro').classList.remove('show');
+  currentQuestion = 0;
+  answers = [];
+  totalScore = 0;
+
+  // branchQuestions 배열 복사 (원본 손상 방지)
+  if (branchQuestions[userInfo.experience]) {
+    branchQuestions[userInfo.experience] = [...branchQuestions[userInfo.experience]];
+  }
+
+  showNextQuestion();
+}
 
     function showNextQuestion() {
       const qWrap = document.getElementById('questions');
@@ -585,10 +591,15 @@
 
       // branch: true 마커가 있는 경우, 해당 경력에 맞는 분기 질문을 가져옵니다.
       if (qData.branch) {
-        const branchSet = branchQuestions[userInfo.experience];
-        // shift()를 사용해 앞에서부터 질문을 하나씩 제거하며 사용 (baseQuestions의 branch 마커 순서와 일치하도록)
-        qData = branchSet.shift();
-      }
+  const branchSet = branchQuestions[userInfo.experience];
+  if (branchSet && branchSet.length > 0) {
+    qData = branchSet.shift();
+  } else {
+    currentQuestion++;
+    showNextQuestion(); // 다음 질문으로 넘김
+    return;
+  }
+}
 
       const qDiv = document.createElement('div');
       qDiv.className = 'container show';
