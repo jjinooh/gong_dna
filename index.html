@@ -355,26 +355,31 @@ function showNextQuestion() {
   const qWrap = document.getElementById('questions');
   qWrap.innerHTML = '';
 
-  if (currentQuestion >= baseQuestions.length) {
+  let qData;
+  let questionNumberPrefix; // 질문 번호에 'Q' 또는 'B' 등을 붙일 수 있도록 변수 추가
+
+  // 1. branchQueue에 질문이 남아있으면, 연차별 질문을 먼저 출제합니다.
+  if (branchQueue.length > 0) {
+    qData = branchQueue.shift();
+    questionNumberPrefix = "Q"; // 연차별 질문 번호
+  }
+  // 2. branchQueue가 비었고, baseQuestions에 질문이 남아있으면, 기본 질문을 출제합니다.
+  else if (currentQuestion < baseQuestions.length) {
+    qData = baseQuestions[currentQuestion];
+    currentQuestion++; // 기본 질문일 때만 currentQuestion을 증가시킵니다.
+    questionNumberPrefix = "B"; // 기본 질문 번호 (원하시면 Q로 통일해도 됩니다)
+  }
+  // 3. 모든 질문이 끝났다면 결과 화면을 보여줍니다.
+  else {
     showResult();
     return;
-  }
-
-  let qData = baseQuestions[currentQuestion];
-  if (qData.branch) {
-    if (branchQueue.length > 0) {
-      qData = branchQueue.shift();
-    } else {
-      currentQuestion++;
-      showNextQuestion();
-      return;
-    }
   }
 
   const qDiv = document.createElement('div');
   qDiv.className = 'container show';
   const qTitle = document.createElement('p');
-  qTitle.innerHTML = `<strong>Q${currentQuestion + 1}.</strong> ${qData.text}`;
+  // 현재 답변된 질문의 총 개수에 1을 더해 질문 번호를 매깁니다.
+  qTitle.innerHTML = `<strong>${questionNumberPrefix}${answers.length + 1}.</strong> ${qData.text}`;
   qDiv.appendChild(qTitle);
 
   qData.options.forEach(option => {
@@ -383,9 +388,8 @@ function showNextQuestion() {
     btn.onclick = () => {
       answers.push(option.text);
       totalScore += option.score;
-      currentQuestion++;
       qDiv.remove();
-      showNextQuestion();
+      showNextQuestion(); // 다음 질문을 보여주기 위해 재귀 호출
     };
     qDiv.appendChild(btn);
   });
