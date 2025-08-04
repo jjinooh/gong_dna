@@ -576,11 +576,18 @@
       qWrap.innerHTML = '';
 
       // baseQuestions의 모든 질문을 다 처리했으면 결과 화면 표시
-      if (currentQuestion >= baseQuestions.length) {
-        showResult();
-        return;
-      }
-
+      if (qData.branch) {
+        const branchSet = branchQuestions[userInfo.experience];
+        if (branchSet && branchSet.length > 0) {
+           qData = branchSet.shift();
+        } else {
+    // 브랜치 질문이 없거나 모두 사용했을 경우 다음 질문으로 넘어갑니다
+          currentQuestion++;
+          showNextQuestion();
+          return;
+        }
+     }
+ 
       let qData = baseQuestions[currentQuestion];
 
       // branch: true 마커가 있는 경우, 해당 경력에 맞는 분기 질문을 가져옵니다.
